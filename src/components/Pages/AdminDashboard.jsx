@@ -21,8 +21,9 @@ import {
   FiAlertTriangle,
   FiShield,
 } from "react-icons/fi";
-import { ADMIN_EMAIL, TECHNICIANS, USERS } from "../../config";
+import { ADMIN_EMAIL } from "../../config";
 import { addTechnician, getTechnicians } from "../../technicianService";
+import { getUsers } from "../../userService";
 
 // ===== SIDEBAR =====
 function Sidebar({
@@ -1822,9 +1823,10 @@ function SettingsSection() {
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [technicians, setTechnicians] = useState(TECHNICIANS);
-  const [users, setUsers] = useState(USERS);
+  const [technicians, setTechnicians] = useState([]);
+  const [users, setUsers] = useState([]);
 
+  // Get Technicians
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -1836,6 +1838,22 @@ export default function AdminDashboard() {
     };
 
     fetchData();
+  }, []);
+
+  // Get USers
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const data = await getUsers();
+        setUsers(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchUsers();
   }, []);
 
   const renderSection = () => {

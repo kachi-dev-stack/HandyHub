@@ -1,7 +1,7 @@
-export const ADMIN_EMAIL = "wonyekachi67@gmail.com";
-export const USER_EMAIL = "conyekachi007@gmail.com";
+import { db } from "../firebase";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 
-export const TECHNICIANS = [
+const TECHNICIANS = [
   {
     id: 1,
     name: "Chinedu Okafor",
@@ -216,45 +216,26 @@ export const TECHNICIANS = [
   },
 ];
 
-export const USERS = [
-  {
-    email: "uche.okeke@gmail.com",
-    status: "Active",
-    dateJoined: "2024-01-15",
-  },
-  {
-    email: "chinenye.obi@yahoo.com",
-    status: "Active",
-    dateJoined: "2024-02-20",
-  },
-  {
-    email: "emmanuel.eze@hotmail.com",
-    status: "Inactive",
-    dateJoined: "2024-03-05",
-  },
-  {
-    email: "blessing.nwosu@gmail.com",
-    status: "Active",
-    dateJoined: "2024-03-18",
-  },
-  {
-    email: "kelvin.okafor@outlook.com",
-    status: "Inactive",
-    dateJoined: "2024-04-02",
-  },
-  {
-    email: "adaeze.okeke@gmail.com",
-    status: "Active",
-    dateJoined: "2024-04-10",
-  },
-  {
-    email: "somto.eze@email.com",
-    status: "Active",
-    dateJoined: "2024-05-01",
-  },
-  {
-    email: "obinna.maduka@gmail.com",
-    status: "Inactive",
-    dateJoined: "2024-05-15",
-  },
-];
+export const seedTechnicians = async () => {
+  try {
+    for (const tech of TECHNICIANS) {
+      const q = query(
+        collection(db, "technicians"),
+        where("email", "==", tech.email),
+      );
+
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        await addDoc(collection(db, "technicians"), tech);
+        console.log("Added:", tech.name);
+      } else {
+        console.log("Skipped (exists):", tech.email);
+      }
+    }
+
+    console.log("Seeding complete");
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};

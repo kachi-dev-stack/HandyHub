@@ -1,12 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getTechnicians } from "../../technicianService";
 import { FiSearch } from "react-icons/fi";
-import { TECHNICIANS } from "../../config";
 import TechnicianCard from "../UIS/TechnicianCard";
 
 const UserDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [technicians, setTechnicians] = useState([]);
 
-  const filteredTechnicians = TECHNICIANS.filter(
+  // Get Technicians
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getTechnicians();
+        setTechnicians(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const filteredTechnicians = technicians.filter(
     (tech) =>
       tech.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       tech.skill.toLowerCase().includes(searchQuery.toLowerCase()) ||
