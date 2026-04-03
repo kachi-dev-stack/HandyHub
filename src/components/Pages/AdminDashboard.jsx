@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FiBarChart2,
   FiTool,
@@ -22,6 +22,7 @@ import {
   FiShield,
 } from "react-icons/fi";
 import { ADMIN_EMAIL, TECHNICIANS, USERS } from "../../config";
+import { addTechnician, getTechnicians } from "../../technicianService";
 
 // ===== SIDEBAR =====
 function Sidebar({
@@ -174,7 +175,9 @@ function StatCard({ title, value, icon, color, bgColor }) {
 }
 
 // ===== TECHNICIAN FORM (Modal) =====
-function TechnicianForm({ tech, onClose, onSave }) {
+function TechnicianForm({ tech, onClose }) {
+  const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState(
     tech || {
       name: "",
@@ -185,7 +188,7 @@ function TechnicianForm({ tech, onClose, onSave }) {
       phone: "",
       bio: "",
       image: "",
-      portfolio: [""],
+      portfolio: [{ url: "", title: "" }],
     },
   );
 
@@ -198,14 +201,17 @@ function TechnicianForm({ tech, onClose, onSave }) {
     if (file) setForm({ ...form, image: URL.createObjectURL(file) });
   };
 
-  const handlePortfolioChange = (index, value) => {
+  const handlePortfolioChange = (index, field, value) => {
     const updated = [...form.portfolio];
-    updated[index] = value;
+    updated[index][field] = value;
     setForm({ ...form, portfolio: updated });
   };
 
   const addPortfolioInput = () => {
-    setForm({ ...form, portfolio: [...form.portfolio, ""] });
+    setForm({
+      ...form,
+      portfolio: [...form.portfolio, { url: "", title: "" }],
+    });
   };
 
   const removePortfolioInput = (index) => {
@@ -213,14 +219,26 @@ function TechnicianForm({ tech, onClose, onSave }) {
     setForm({ ...form, portfolio: updated });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(form);
-    onClose();
+
+    if (loading) return;
+
+    setLoading(true);
+
+    try {
+      await addTechnician(form);
+      alert("Technician added successsfully");
+      onClose();
+    } catch (error) {
+      alert("Error adding technician");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const [profileTab, setProfileTab] = useState("url"); // 'url' or 'upload'
-  const [portfolioTab, setPortfolioTab] = useState("url"); // 'url' or 'upload'
+  const [profileTab, setProfileTab] = useState("url");
+  const [portfolioTab, setPortfolioTab] = useState("url");
 
   return (
     <div className="fixed inset-0 bg-transparent bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -352,21 +370,6 @@ function TechnicianForm({ tech, onClose, onSave }) {
             </div>
           </div>
 
-          {/* Old Profile Image */}
-          {/* <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Profile Image URL
-            </label>
-            <input
-              name="image"
-              value={form.image}
-              onChange={handleChange}
-              placeholder="https://example.com/photo.jpg"
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
-              onFocus={(e) => (e.target.style.boxShadow = "0 0 0 2px #F97316")}
-              onBlur={(e) => (e.target.style.boxShadow = "")}
-            />
-          </div> */}
           {/* PROFILE IMAGE */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -423,49 +426,6 @@ function TechnicianForm({ tech, onClose, onSave }) {
             />
           </div>
 
-          {/* Old Portfolio */}
-          {/* <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Portfolio Images (URLs)
-              </label>
-              <button
-                type="button"
-                onClick={addPortfolioInput}
-                className="text-xs px-3 py-1 rounded-lg font-medium text-white"
-                style={{ backgroundColor: "#F97316" }}
-              >
-                + Add
-              </button>
-            </div>
-            <div className="space-y-2">
-              {form.portfolio.map((url, index) => (
-                <div key={index} className="flex gap-2">
-                  <input
-                    value={url}
-                    onChange={(e) =>
-                      handlePortfolioChange(index, e.target.value)
-                    }
-                    placeholder={`Portfolio image ${index + 1} URL`}
-                    className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
-                    onFocus={(e) =>
-                      (e.target.style.boxShadow = "0 0 0 2px #F97316")
-                    }
-                    onBlur={(e) => (e.target.style.boxShadow = "")}
-                  />
-                  {form.portfolio.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removePortfolioInput(index)}
-                      className="px-3 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-colors text-sm"
-                    >
-                      <FiX />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div> */}
           {/* PORTFOLIO IMAGES */}
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -559,12 +519,13 @@ function TechnicianForm({ tech, onClose, onSave }) {
             </button>
             <button
               type="submit"
+              disabled={loading}
               className="flex-1 px-6 py-3 rounded-xl text-white font-medium text-sm transition-colors"
               style={{ backgroundColor: "#F97316" }}
               onMouseEnter={(e) => (e.target.style.backgroundColor = "#ea6c0a")}
               onMouseLeave={(e) => (e.target.style.backgroundColor = "#F97316")}
             >
-              {tech ? "Save Changes" : "Add Technician"}
+              {loading ? "Saving..." : tech ? "Save Changes" : "Add Technician"}
             </button>
           </div>
         </form>
@@ -1863,6 +1824,19 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [technicians, setTechnicians] = useState(TECHNICIANS);
   const [users, setUsers] = useState(USERS);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getTechnicians();
+        setTechnicians(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const renderSection = () => {
     switch (activeSection) {

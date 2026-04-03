@@ -13,9 +13,18 @@ export const TECHNICIANS = [
     bio: "Experienced plumber with over 10 years in residential and commercial plumbing across Aba and Umuahia. Specializes in pipe fitting and leak repairs.",
     image: "https://randomuser.me/api/portraits/men/32.jpg",
     portfolio: [
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400",
-      "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?w=400",
-      "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400",
+      {
+        title: "Modern HVAC Installation",
+        url: "https://images.pexels.com/photos/3862619/pexels-photo-3862619.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Central Air System Upgrade",
+        url: "https://images.pexels.com/photos/6147183/pexels-photo-6147183.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Ductwork Renovation",
+        url: "https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
     ],
   },
   {
@@ -29,9 +38,14 @@ export const TECHNICIANS = [
     bio: "Licensed electrician specializing in wiring, inverter setups, and solar installations. 8 years of experience in Abia State.",
     image: "https://randomuser.me/api/portraits/women/44.jpg",
     portfolio: [
-      "https://images.unsplash.com/photo-1621905251189-08b45249ff78?w=400",
-      "https://images.unsplash.com/photo-1513467535987-fd81bc7d62f8?w=400",
-      "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400",
+      {
+        title: "Commercial HVAC System",
+        url: "https://images.pexels.com/photos/8474496/pexels-photo-8474496.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Energy Efficient Install",
+        url: "https://images.pexels.com/photos/7974/pexels-photo.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
     ],
   },
   {
@@ -45,8 +59,26 @@ export const TECHNICIANS = [
     bio: "Certified HVAC technician working around Michael Okpara University of Agriculture, Umudike. Skilled in installation and maintenance of cooling systems.",
     image: "https://randomuser.me/api/portraits/men/55.jpg",
     portfolio: [
-      "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400",
-      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400",
+      {
+        title: "Central Air System Upgrade",
+        url: "https://images.pexels.com/photos/6147183/pexels-photo-6147183.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Ductwork Renovation",
+        url: "https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Commercial HVAC System",
+        url: "https://images.pexels.com/photos/8474496/pexels-photo-8474496.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Energy Efficient Install",
+        url: "https://images.pexels.com/photos/7974/pexels-photo.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Maintenance Service",
+        url: "https://images.pexels.com/photos/3852471/pexels-photo-3852471.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
     ],
   },
   {
@@ -60,8 +92,26 @@ export const TECHNICIANS = [
     bio: "Skilled carpenter specializing in furniture making, wardrobes, and home fittings across Aba and its environs.",
     image: "https://randomuser.me/api/portraits/women/28.jpg",
     portfolio: [
-      "https://images.unsplash.com/photo-1601524909162-ae8725290836?w=400",
-      "https://images.unsplash.com/photo-1553527022-7a47b7af1c68?w=400",
+      {
+        title: "Central Air System Upgrade",
+        url: "https://images.pexels.com/photos/6147183/pexels-photo-6147183.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Ductwork Renovation",
+        url: "https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Commercial HVAC System",
+        url: "https://images.pexels.com/photos/8474496/pexels-photo-8474496.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Energy Efficient Install",
+        url: "https://images.pexels.com/photos/7974/pexels-photo.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Maintenance Service",
+        url: "https://images.pexels.com/photos/3852471/pexels-photo-3852471.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
     ],
   },
   {
@@ -75,8 +125,18 @@ export const TECHNICIANS = [
     bio: "Professional painter offering interior and exterior painting services with modern finishing styles in Umuahia.",
     image: "https://randomuser.me/api/portraits/men/67.jpg",
     portfolio: [
-      "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=400",
-      "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400",
+      {
+        title: "Ductwork Renovation",
+        url: "https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Commercial HVAC System",
+        url: "https://images.pexels.com/photos/8474496/pexels-photo-8474496.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Energy Efficient Install",
+        url: "https://images.pexels.com/photos/7974/pexels-photo.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
     ],
   },
   {
@@ -90,8 +150,18 @@ export const TECHNICIANS = [
     bio: "Professional painter offering interior and exterior painting services with modern finishing styles in Umuahia.",
     image: "https://randomuser.me/api/portraits/men/67.jpg",
     portfolio: [
-      "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=400",
-      "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400",
+      {
+        title: "Ductwork Renovation",
+        url: "https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Commercial HVAC System",
+        url: "https://images.pexels.com/photos/8474496/pexels-photo-8474496.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Energy Efficient Install",
+        url: "https://images.pexels.com/photos/7974/pexels-photo.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
     ],
   },
   {
@@ -105,23 +175,43 @@ export const TECHNICIANS = [
     bio: "Professional painter offering interior and exterior painting services with modern finishing styles in Umuahia.",
     image: "https://randomuser.me/api/portraits/men/67.jpg",
     portfolio: [
-      "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=400",
-      "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400",
+      {
+        title: "Central Air System Upgrade",
+        url: "https://images.pexels.com/photos/6147183/pexels-photo-6147183.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Ductwork Renovation",
+        url: "https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
     ],
   },
   {
     id: 8,
-    name: "Emeka Obi",
-    skill: "Painter",
+    name: "Samuel Onyekachi",
+    skill: "Dev Ops",
     location: "Umuahia, Abia State",
     status: "Active",
-    email: "emeka.obi@gmail.com",
+    email: "conyekachi007@gmail.com",
     phone: "+234 805 567 8901",
-    bio: "Professional painter offering interior and exterior painting services with modern finishing styles in Umuahia.",
+    bio: "Professional Developer offering interior and exterior Developing services with modern finishing styles in Umuahia.",
     image: "https://randomuser.me/api/portraits/men/67.jpg",
     portfolio: [
-      "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=400",
-      "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400",
+      {
+        title: "Central Air System Upgrade",
+        url: "https://images.pexels.com/photos/6147183/pexels-photo-6147183.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Ductwork Renovation",
+        url: "https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Commercial HVAC System",
+        url: "https://images.pexels.com/photos/8474496/pexels-photo-8474496.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
+      {
+        title: "Energy Efficient Install",
+        url: "https://images.pexels.com/photos/7974/pexels-photo.jpeg?auto=compress&cs=tinysrgb&w=500",
+      },
     ],
   },
 ];
