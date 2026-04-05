@@ -22,10 +22,16 @@ import {
   FiShield,
 } from "react-icons/fi";
 import { ADMIN_EMAIL } from "../../config";
-import { addTechnician, getTechnicians } from "../../technicianService";
+import {
+  addTechnician,
+  deleteTechnician,
+  getTechnicians,
+  updateTechnician,
+} from "../../technicianService";
 import { getUsers } from "../../userService";
 import Spinner from "../UIS/Spinner";
-
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../auth";
 // ===== SIDEBAR =====
 function Sidebar({
   activeSection,
@@ -39,6 +45,15 @@ function Sidebar({
     { id: "users", label: "Users", icon: <FiUsers /> },
     { id: "settings", label: "Settings", icon: <FiSettings /> },
   ];
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed: ", error);
+    }
+  };
 
   return (
     <>
@@ -102,7 +117,7 @@ function Sidebar({
         {/* Logout */}
         <div className="p-4 border-t border-blue-700">
           <button
-            onClick={() => alert("Logged out!")}
+            onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-blue-200 hover:bg-blue-700 hover:text-white transition-all duration-200"
           >
             <FiLogOut className="text-lg" />
@@ -116,6 +131,16 @@ function Sidebar({
 
 // ===== NAVBAR =====
 function Navbar({ sidebarOpen, setSidebarOpen }) {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed: ", error);
+    }
+  };
   return (
     <header className="bg-white shadow-sm border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
       <div className="flex items-center gap-4">
@@ -145,7 +170,7 @@ function Navbar({ sidebarOpen, setSidebarOpen }) {
           <span className="text-sm text-gray-600">{ADMIN_EMAIL}</span>
         </div>
         <button
-          onClick={() => alert("Logged out!")}
+          onClick={handleLogout}
           className="px-3 py-2 rounded-xl text-md font-medium text-white transition-colors"
           style={{ backgroundColor: "#F97316" }}
         >
@@ -177,7 +202,7 @@ function StatCard({ title, value, icon, color, bgColor }) {
 }
 
 // ===== TECHNICIAN FORM (Modal) =====
-function TechnicianForm({ tech, onClose }) {
+function TechnicianForm({ tech, onClose, onSave }) {
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState(
@@ -193,6 +218,12 @@ function TechnicianForm({ tech, onClose }) {
       portfolio: [{ url: "", title: "" }],
     },
   );
+
+  useEffect(() => {
+    if (tech) {
+      setForm(tech);
+    }
+  }, [tech]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -229,8 +260,7 @@ function TechnicianForm({ tech, onClose }) {
     setLoading(true);
 
     try {
-      await addTechnician(form);
-      alert("Technician added successsfully");
+      await onSave(form);
       onClose();
     } catch (error) {
       alert("Error adding technician");
@@ -536,320 +566,6 @@ function TechnicianForm({ tech, onClose }) {
   );
 }
 
-// function TechnicianForm({ tech, onClose, onSave }) {
-//   const [form, setForm] = useState(
-//     tech || {
-//       name: "",
-//       skill: "",
-//       location: "",
-//       status: "Active",
-//       email: "",
-//       phone: "",
-//       bio: "",
-//       image: "",
-//       portfolio: [{ title: "", image: "" }],
-//     },
-//   );
-
-//   const [profileTab, setProfileTab] = useState("url"); // 'url' or 'upload'
-//   const [portfolioTab, setPortfolioTab] = useState("url"); // 'url' or 'upload'
-
-//   const handleChange = (e) => {
-//     setForm({ ...form, [e.target.name]: e.target.value });
-//   };
-
-//   const handleProfileUpload = (e) => {
-//     const file = e.target.files[0];
-//     if (file) setForm({ ...form, image: URL.createObjectURL(file) });
-//   };
-
-//   const handlePortfolioChange = (index, field, value) => {
-//     const updated = [...form.portfolio];
-//     updated[index][field] = value;
-//     setForm({ ...form, portfolio: updated });
-//   };
-
-//   const addPortfolioInput = () => {
-//     setForm({
-//       ...form,
-//       portfolio: [...form.portfolio, { title: "", image: "" }],
-//     });
-//   };
-
-//   const removePortfolioInput = (index) => {
-//     const updated = form.portfolio.filter((_, i) => i !== index);
-//     setForm({ ...form, portfolio: updated });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     onSave(form);
-//     onClose();
-//   };
-
-//   return (
-//     <div className="fixed inset-0 bg-transparent bg-opacity-50 z-50 flex items-center justify-center p-4">
-//       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-//         <div className="p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
-//           <h3 className="text-xl font-bold text-gray-800">
-//             {tech ? "Edit Technician" : "Add New Technician"}
-//           </h3>
-//           <button
-//             onClick={onClose}
-//             className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
-//           >
-//             <FiX />
-//           </button>
-//         </div>
-
-//         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-//           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700 mb-1">
-//                 Full Name *
-//               </label>
-//               <input
-//                 name="name"
-//                 value={form.name}
-//                 onChange={handleChange}
-//                 required
-//                 placeholder="John Doe"
-//                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none"
-//               />
-//             </div>
-
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700 mb-1">
-//                 Skill / Specialty *
-//               </label>
-//               <input
-//                 name="skill"
-//                 value={form.skill}
-//                 onChange={handleChange}
-//                 required
-//                 placeholder="e.g. Plumber, Electrician"
-//                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none"
-//               />
-//             </div>
-
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700 mb-1">
-//                 Location *
-//               </label>
-//               <input
-//                 name="location"
-//                 value={form.location}
-//                 onChange={handleChange}
-//                 required
-//                 placeholder="City, State"
-//                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none"
-//               />
-//             </div>
-
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700 mb-1">
-//                 Status
-//               </label>
-//               <select
-//                 name="status"
-//                 value={form.status}
-//                 onChange={handleChange}
-//                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none bg-white"
-//               >
-//                 <option>Active</option>
-//                 <option>Busy</option>
-//               </select>
-//             </div>
-
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700 mb-1">
-//                 Email *
-//               </label>
-//               <input
-//                 name="email"
-//                 type="email"
-//                 value={form.email}
-//                 onChange={handleChange}
-//                 required
-//                 placeholder="email@example.com"
-//                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none"
-//               />
-//             </div>
-
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700 mb-1">
-//                 Phone
-//               </label>
-//               <input
-//                 name="phone"
-//                 value={form.phone}
-//                 onChange={handleChange}
-//                 placeholder="+1 (555) 000-0000"
-//                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none"
-//               />
-//             </div>
-//           </div>
-
-//           {/* Profile Image */}
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700 mb-1">
-//               Profile Image *
-//             </label>
-//             <div className="flex gap-2 mb-2">
-//               <button
-//                 type="button"
-//                 className={`px-3 py-1 rounded-xl ${profileTab === "url" ? "bg-orange-500 text-white" : "bg-gray-100"}`}
-//                 onClick={() => setProfileTab("url")}
-//               >
-//                 URL
-//               </button>
-//               <button
-//                 type="button"
-//                 className={`px-3 py-1 rounded-xl ${profileTab === "upload" ? "bg-orange-500 text-white" : "bg-gray-100"}`}
-//                 onClick={() => setProfileTab("upload")}
-//               >
-//                 Upload
-//               </button>
-//             </div>
-//             {profileTab === "url" ? (
-//               <input
-//                 name="image"
-//                 value={form.image}
-//                 onChange={handleChange}
-//                 placeholder="https://example.com/photo.jpg"
-//                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none"
-//               />
-//             ) : (
-//               <input
-//                 type="file"
-//                 accept="image/*"
-//                 onChange={handleProfileUpload}
-//                 className="w-full text-sm"
-//               />
-//             )}
-//           </div>
-
-//           {/* Bio */}
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700 mb-1">
-//               Bio
-//             </label>
-//             <textarea
-//               name="bio"
-//               value={form.bio}
-//               onChange={handleChange}
-//               rows={3}
-//               placeholder="Brief description of experience..."
-//               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm resize-none focus:outline-none"
-//             />
-//           </div>
-
-//           {/* Portfolio */}
-//           <div>
-//             <div className="flex items-center justify-between mb-2">
-//               <label className="block text-sm font-medium text-gray-700">
-//                 Portfolio Images *
-//               </label>
-//               <button
-//                 type="button"
-//                 onClick={addPortfolioInput}
-//                 className="text-xs px-3 py-1 rounded-lg font-medium text-white bg-orange-500"
-//               >
-//                 + Add
-//               </button>
-//             </div>
-
-//             <div className="flex gap-2 mb-2">
-//               <button
-//                 type="button"
-//                 className={`px-3 py-1 rounded-xl ${portfolioTab === "url" ? "bg-orange-500 text-white" : "bg-gray-100"}`}
-//                 onClick={() => setPortfolioTab("url")}
-//               >
-//                 URL
-//               </button>
-//               <button
-//                 type="button"
-//                 className={`px-3 py-1 rounded-xl ${portfolioTab === "upload" ? "bg-orange-500 text-white" : "bg-gray-100"}`}
-//                 onClick={() => setPortfolioTab("upload")}
-//               >
-//                 Upload
-//               </button>
-//             </div>
-
-//             <div className="space-y-2">
-//               {form.portfolio.map((item, index) => (
-//                 <div key={index} className="flex gap-2 items-center">
-//                   {portfolioTab === "url" ? (
-//                     <input
-//                       value={item.image}
-//                       onChange={(e) =>
-//                         handlePortfolioChange(index, "image", e.target.value)
-//                       }
-//                       placeholder={`Portfolio image ${index + 1} URL`}
-//                       className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none"
-//                     />
-//                   ) : (
-//                     <input
-//                       type="file"
-//                       accept="image/*"
-//                       onChange={(e) =>
-//                         handlePortfolioChange(
-//                           index,
-//                           "image",
-//                           e.target.files[0]
-//                             ? URL.createObjectURL(e.target.files[0])
-//                             : "",
-//                         )
-//                       }
-//                       className="flex-1 text-sm"
-//                     />
-//                   )}
-//                   <input
-//                     value={item.title}
-//                     onChange={(e) =>
-//                       handlePortfolioChange(index, "title", e.target.value)
-//                     }
-//                     placeholder="Image Title"
-//                     className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none"
-//                     required
-//                   />
-//                   {form.portfolio.length > 1 && (
-//                     <button
-//                       type="button"
-//                       onClick={() => removePortfolioInput(index)}
-//                       className="px-3 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 text-sm"
-//                     >
-//                       <FiX />
-//                     </button>
-//                   )}
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-
-//           {/* Submit / Cancel */}
-//           <div className="flex gap-3 pt-2">
-//             <button
-//               type="button"
-//               onClick={onClose}
-//               className="flex-1 px-6 py-3 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium text-sm"
-//             >
-//               Cancel
-//             </button>
-//             <button
-//               type="submit"
-//               className="flex-1 px-6 py-3 rounded-xl text-white font-medium text-sm"
-//               style={{ backgroundColor: "#F97316" }}
-//             >
-//               {tech ? "Save Changes" : "Add Technician"}
-//             </button>
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }
-
 // ===== TECHNICIAN PROFILE PREVIEW =====
 function TechnicianProfile({ tech, onClose, onEdit, onDelete }) {
   return (
@@ -991,7 +707,7 @@ function TechnicianProfile({ tech, onClose, onEdit, onDelete }) {
 }
 
 // ===== TECHNICIAN TABLE =====
-function TechnicianTable({ technicians, setTechnicians, loading }) {
+function TechnicianTable({ technicians, refreshTechnicians, loading }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [showForm, setShowForm] = useState(false);
@@ -1007,25 +723,31 @@ function TechnicianTable({ technicians, setTechnicians, loading }) {
     return matchSearch && matchStatus;
   });
 
-  const handleSave = (form) => {
-    if (editingTech) {
-      setTechnicians(
-        technicians.map((t) =>
-          t.id === editingTech.id ? { ...form, id: t.id } : t,
-        ),
-      );
-    } else {
-      setTechnicians([
-        ...technicians,
-        { ...form, id: Date.now(), portfolio: form.portfolio || [] },
-      ]);
+  const handleSave = async (form) => {
+    try {
+      if (editingTech && editingTech.id) {
+        await updateTechnician(editingTech.id, form);
+      } else {
+        await addTechnician(form);
+      }
+
+      await refreshTechnicians();
+      setEditingTech(null);
+      setShowForm(false);
+    } catch (error) {
+      console.error(error);
     }
-    setEditingTech(null);
   };
 
-  const handleDelete = (id) => {
-    if (confirm("Delete this technician?")) {
-      setTechnicians(technicians.filter((t) => t.id !== id));
+  const handleDelete = async (id) => {
+    console.log("deleting: ", id);
+    if (!confirm("Delete this technician?")) return;
+
+    try {
+      await deleteTechnician(id);
+      await refreshTechnicians();
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -1108,7 +830,13 @@ function TechnicianTable({ technicians, setTechnicians, loading }) {
             </tr>
           </thead>
           <tbody>
-            {filtered.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan={6}>
+                  <Spinner fullScreen={false} text="Loading technicians..." />
+                </td>
+              </tr>
+            ) : filtered.length === 0 ? (
               <tr>
                 <td
                   colSpan={6}
@@ -1308,7 +1036,7 @@ function TechnicianTable({ technicians, setTechnicians, loading }) {
 }
 
 // ===== USER TABLE =====
-function UserTable({ users, setUsers, loading }) {
+function UserTable({ users, setUsers, refreshUsers, loading }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
@@ -1388,7 +1116,13 @@ function UserTable({ users, setUsers, loading }) {
             </tr>
           </thead>
           <tbody>
-            {filtered.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan={6}>
+                  <Spinner fullScreen={false} text="Loading Users..." />
+                </td>
+              </tr>
+            ) : filtered.length === 0 ? (
               <tr>
                 <td
                   colSpan={4}
@@ -1658,7 +1392,7 @@ function DashboardOverview({ technicians, users, loadingTechs, loadingUsers }) {
               ))
             ) : (
               <div className="text-center py-12">
-                <p className="text-xl text-gray-500">
+                <p className="px-6 py-12 text-center text-gray-400 text-sm">
                   No recent technicians found
                 </p>
               </div>
@@ -1716,7 +1450,9 @@ function DashboardOverview({ technicians, users, loadingTechs, loadingUsers }) {
               ))
             ) : (
               <div className="text-center py-12">
-                <p className="text-xl text-gray-500">No recent users found</p>
+                <p className="px-6 py-12 text-center text-gray-400 text-sm">
+                  No recent users found
+                </p>
               </div>
             )}
           </div>
@@ -1850,32 +1586,33 @@ export default function AdminDashboardPage() {
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
 
-  useEffect(() => {
-    // Get Technicians
-    const fetchTechs = async () => {
-      try {
-        setLoadingTechs(true);
-        const data = await getTechnicians();
-        setTechnicians(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoadingTechs(false);
-      }
-    };
+  // Get Technicians
+  const fetchTechs = async () => {
+    try {
+      setLoadingTechs(true);
+      const data = await getTechnicians();
+      setTechnicians(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingTechs(false);
+    }
+  };
 
-    // Get USers
-    const fetchUsers = async () => {
-      try {
-        setLoadingUsers(true);
-        const data = await getUsers();
-        setUsers(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoadingUsers(false);
-      }
-    };
+  // Get Users
+  const fetchUsers = async () => {
+    try {
+      setLoadingUsers(true);
+      const data = await getUsers();
+      setUsers(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  useEffect(() => {
     fetchTechs();
     fetchUsers();
   }, []);
@@ -1896,12 +1633,18 @@ export default function AdminDashboardPage() {
           <TechnicianTable
             technicians={technicians}
             setTechnicians={setTechnicians}
+            refreshTechnicians={fetchTechs}
             loading={loadingTechs}
           />
         );
       case "users":
         return (
-          <UserTable users={users} setUsers={setUsers} loading={loadingUsers} />
+          <UserTable
+            users={users}
+            setUsers={setUsers}
+            loading={loadingUsers}
+            refreshUsers={fetchUsers}
+          />
         );
       case "settings":
         return <SettingsSection />;

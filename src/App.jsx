@@ -13,6 +13,7 @@ import TechnicianProfilePage from "./components/Pages/TechnicianProfilePage";
 import AdminDashboardPage from "./components/Pages/AdminDashboardPage";
 import ScrollToTop from "./ScrollToTop";
 import UserLayout from "./components/Layout/UserLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -34,15 +35,24 @@ const router = createBrowserRouter(
         path="/technicians"
         element={
           <>
-            <ScrollToTop />
-            <UserLayout />
+            <ProtectedRoute>
+              <ScrollToTop />
+              <UserLayout />
+            </ProtectedRoute>
           </>
         }
       >
         <Route index element={<TechniciansPage />} />
         <Route path="technician/:id" element={<TechnicianProfilePage />} />
       </Route>
-      <Route path="/admin" element={<AdminDashboardPage />} />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AdminDashboardPage />
+          </ProtectedRoute>
+        }
+      />
     </>,
   ),
 );

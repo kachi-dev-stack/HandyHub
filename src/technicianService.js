@@ -1,6 +1,7 @@
 import { db } from "./firebase";
-import { collection, addDoc, getDocs, getDoc, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
 
+// Add Technician
 export const addTechnician = async (data) => {
   try {
     const docRef = await addDoc(collection(db, "technicians"), data);
@@ -11,6 +12,7 @@ export const addTechnician = async (data) => {
   }
 };
 
+// Get Technicians
 export const getTechnicians = async () => {
   try {
     const snapshot = await getDocs(collection(db, "technicians"));
@@ -27,6 +29,7 @@ export const getTechnicians = async () => {
   }
 };
 
+//  Get TechnicianById
 export const getTechnicianById = async (id) => {
   const docRef = doc(db, "technicians", id);
   const docSnap = await getDoc(docRef);
@@ -37,3 +40,25 @@ export const getTechnicianById = async (id) => {
     throw new Error("Technician not found");
   }
 };
+
+// Update Technician
+export const updateTechnician = async (id, data) =>{
+  try {
+    const ref = doc(db, "technicians", id);
+    await updateDoc(ref, data);
+  } catch (error) {
+    console.error("Error updating technician: ", error)
+    throw error
+  }
+}
+
+// Delete Technician
+export const deleteTechnician = async (id)=>{
+  try {
+    const ref =  doc (db, "technicians", id);
+    await deleteDoc(ref)
+  } catch (error) {
+    console.error("Error deleting technician: ", error)
+    throw error
+  }
+}

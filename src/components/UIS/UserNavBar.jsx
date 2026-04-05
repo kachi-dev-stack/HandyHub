@@ -1,10 +1,20 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { USER_EMAIL } from "../../config";
 import { FiLogOut } from "react-icons/fi";
+import { logout } from "../../auth";
 const UserNavBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed: ", error);
+    }
+  };
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -44,7 +54,7 @@ const UserNavBar = () => {
                 <span className="text-sm text-gray-600">{USER_EMAIL}</span>
               </div>
               <button
-                onClick={() => alert("Logged out!")}
+                onClick={handleLogout}
                 className="px-3 py-2 rounded-xl text-md font-medium text-white transition-colors"
                 style={{ backgroundColor: "#F97316" }}
               >
@@ -70,7 +80,7 @@ const UserNavBar = () => {
                     </p>
                   </div>
                   <button
-                    onClick={() => alert("Logged out!")}
+                    onClick={handleLogout}
                     className="w-full px-4 py-3 text-left hover:bg-gray-100 flex items-center gap-2 text-gray-700 font-medium"
                   >
                     <FiLogOut />
