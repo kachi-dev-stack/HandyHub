@@ -3,7 +3,6 @@ import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 
 const TECHNICIANS = [
   {
-    id: 1,
     name: "Chinedu Okafor",
     skill: "Plumber",
     location: "Aba, Abia State",
@@ -28,7 +27,6 @@ const TECHNICIANS = [
     ],
   },
   {
-    id: 2,
     name: "Amarachi Nwankwo",
     skill: "Electrician",
     location: "Umuahia, Abia State",
@@ -49,7 +47,6 @@ const TECHNICIANS = [
     ],
   },
   {
-    id: 3,
     name: "Ifeanyi Eze",
     skill: "HVAC Technician",
     location: "Umudike, Abia State",
@@ -82,7 +79,6 @@ const TECHNICIANS = [
     ],
   },
   {
-    id: 4,
     name: "Ngozi Onwuka",
     skill: "Carpenter",
     location: "Aba, Abia State",
@@ -115,7 +111,6 @@ const TECHNICIANS = [
     ],
   },
   {
-    id: 5,
     name: "Emeka Obi",
     skill: "Painter",
     location: "Umuahia, Abia State",
@@ -140,7 +135,6 @@ const TECHNICIANS = [
     ],
   },
   {
-    id: 6,
     name: "Emeka Obi",
     skill: "Painter",
     location: "Umuahia, Abia State",
@@ -165,7 +159,6 @@ const TECHNICIANS = [
     ],
   },
   {
-    id: 7,
     name: "Emeka Obi",
     skill: "Painter",
     location: "Umuahia, Abia State",
@@ -186,7 +179,6 @@ const TECHNICIANS = [
     ],
   },
   {
-    id: 8,
     name: "Samuel Onyekachi",
     skill: "Dev Ops",
     location: "Umuahia, Abia State",

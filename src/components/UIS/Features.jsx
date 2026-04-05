@@ -31,7 +31,7 @@ function Features() {
   ];
 
   return (
-    <section id="features" className="bg-[#F3F4F6] py-20 sm:py-24">
+    <section id="features" className="bg-[#F3F4F6] py-20 sm:py-20 ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111827] mb-4">

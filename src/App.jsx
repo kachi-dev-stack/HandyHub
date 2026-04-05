@@ -8,9 +8,9 @@ import LandingPage from "./components/Pages/LandingPage";
 import SignUpPage from "./components/Pages/SignUpPage";
 import LoginPage from "./components/Pages/LoginPage";
 import MainLayout from "./components/Layout/MainLayout";
-import UserDashboard from "./components/Pages/UserDashboard";
-import TechnicianProfile from "./components/Pages/TechnicianProfile";
-import AdminDashboard from "./components/Pages/AdminDashboard";
+import TechniciansPage from "./components/Pages/TechniciansPage";
+import TechnicianProfilePage from "./components/Pages/TechnicianProfilePage";
+import AdminDashboardPage from "./components/Pages/AdminDashboardPage";
 import ScrollToTop from "./ScrollToTop";
 import UserLayout from "./components/Layout/UserLayout";
 
@@ -39,10 +39,10 @@ const router = createBrowserRouter(
           </>
         }
       >
-        <Route index element={<UserDashboard />} />
-        <Route path="technician/:id" element={<TechnicianProfile />} />
+        <Route index element={<TechniciansPage />} />
+        <Route path="technician/:id" element={<TechnicianProfilePage />} />
       </Route>
-      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/admin" element={<AdminDashboardPage />} />
     </>,
   ),
 );

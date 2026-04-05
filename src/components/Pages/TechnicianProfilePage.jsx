@@ -7,52 +7,39 @@ import {
   FiClock,
 } from "react-icons/fi";
 import { useParams } from "react-router-dom";
-import { TECHNICIANS } from "../../config";
+import { useState, useEffect } from "react";
+import { getTechnicianById } from "../../technicianService";
+import Spinner from "../UIS/Spinner";
 
-function TechnicianProfile() {
+function TechnicianProfilePage() {
   const { id } = useParams();
 
-  const technician = TECHNICIANS.find((tech) => tech.id == id);
+  const [technician, setTechnician] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const portfolio = [
-    {
-      id: 1,
-      title: "Modern HVAC Installation",
-      image:
-        "https://images.pexels.com/photos/3862619/pexels-photo-3862619.jpeg?auto=compress&cs=tinysrgb&w=500",
-    },
-    {
-      id: 2,
-      title: "Central Air System Upgrade",
-      image:
-        "https://images.pexels.com/photos/6147183/pexels-photo-6147183.jpeg?auto=compress&cs=tinysrgb&w=500",
-    },
-    {
-      id: 3,
-      title: "Ductwork Renovation",
-      image:
-        "https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=500",
-    },
-    {
-      id: 4,
-      title: "Commercial HVAC System",
-      image:
-        "https://images.pexels.com/photos/8474496/pexels-photo-8474496.jpeg?auto=compress&cs=tinysrgb&w=500",
-    },
-    {
-      id: 5,
-      title: "Energy Efficient Install",
-      image:
-        "https://images.pexels.com/photos/7974/pexels-photo.jpeg?auto=compress&cs=tinysrgb&w=500",
-    },
-    {
-      id: 6,
-      title: "Maintenance Service",
-      image:
-        "https://images.pexels.com/photos/3852471/pexels-photo-3852471.jpeg?auto=compress&cs=tinysrgb&w=500",
-    },
-  ];
-  return (
+  // Get Technician
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const data = await getTechnicianById(id);
+        setTechnician(data);
+      } catch (error) {
+        console.error(error);
+        setError("Failed to load technician");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [id]);
+
+  const portfolio = technician?.portfolio || [];
+
+  return loading ? (
+    <Spinner text="Loading technician..." />
+  ) : (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <main className="flex-grow">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -69,34 +56,34 @@ function TechnicianProfile() {
           <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mb-8">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
               <img
-                src={technician.image}
-                alt={technician.name}
+                src={technician?.image}
+                alt={technician?.name}
                 className="w-40 h-40 rounded-full object-cover border-4 border-orange-500 shadow-lg flex-shrink-0"
               />
 
               <div className="flex-grow text-center md:text-left">
                 <div className="mb-4">
                   <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
-                    {technician.name}
+                    {technician?.name}
                   </h1>
                   <p className="text-xl text-blue-900 font-semibold mb-3">
-                    {technician.skill}
+                    {technician?.skill}
                   </p>
                   <div className="flex items-center justify-center md:justify-start text-gray-600 mb-4">
                     <FiMapPin className="mr-2" size={18} />
-                    <span>{technician.location}</span>
+                    <span>{technician?.location}</span>
                   </div>
                 </div>
 
                 <div className="mb-6">
                   <span
                     className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${
-                      technician.status === "Active"
+                      technician?.status === "Active"
                         ? "bg-green-100 text-green-700"
                         : "bg-red-100 text-red-700"
                     }`}
                   >
-                    {technician.status === "Active" ? (
+                    {technician?.status === "Active" ? (
                       <span className="flex items-center gap-2">
                         <FiCheckCircle /> Active
                       </span>
@@ -111,11 +98,11 @@ function TechnicianProfile() {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                   <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
                     <FiMail size={20} className="text-orange-500" />
-                    <span>{technician.email}</span>
+                    <span>{technician?.email}</span>
                   </div>
                   <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
                     <FiPhone size={20} className="text-orange-500" />
-                    <span>{technician.phone}</span>
+                    <span>{technician?.phone}</span>
                   </div>
                 </div>
               </div>
@@ -128,7 +115,7 @@ function TechnicianProfile() {
               <section className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">About</h2>
                 <p className="text-gray-700 leading-relaxed">
-                  {technician.bio}
+                  {technician?.bio}
                 </p>
               </section>
 
@@ -138,7 +125,7 @@ function TechnicianProfile() {
                   Portfolio
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {portfolio.map((project) => (
+                  {portfolio?.map((project) => (
                     <div
                       key={project.id}
                       className="relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105"
@@ -176,7 +163,7 @@ function TechnicianProfile() {
                         Email
                       </p>
                       <p className="text-gray-900 font-medium text-sm break-all">
-                        {technician.email}
+                        {technician?.email}
                       </p>
                     </div>
                   </div>
@@ -190,7 +177,7 @@ function TechnicianProfile() {
                         Phone
                       </p>
                       <p className="text-gray-900 font-medium text-sm">
-                        {technician.phone}
+                        {technician?.phone}
                       </p>
                     </div>
                   </div>
@@ -204,4 +191,4 @@ function TechnicianProfile() {
   );
 }
 
-export default TechnicianProfile;
+export default TechnicianProfilePage;

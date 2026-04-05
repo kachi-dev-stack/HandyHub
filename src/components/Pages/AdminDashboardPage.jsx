@@ -24,6 +24,7 @@ import {
 import { ADMIN_EMAIL } from "../../config";
 import { addTechnician, getTechnicians } from "../../technicianService";
 import { getUsers } from "../../userService";
+import Spinner from "../UIS/Spinner";
 
 // ===== SIDEBAR =====
 function Sidebar({
@@ -990,7 +991,7 @@ function TechnicianProfile({ tech, onClose, onEdit, onDelete }) {
 }
 
 // ===== TECHNICIAN TABLE =====
-function TechnicianTable({ technicians, setTechnicians }) {
+function TechnicianTable({ technicians, setTechnicians, loading }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [showForm, setShowForm] = useState(false);
@@ -1307,7 +1308,7 @@ function TechnicianTable({ technicians, setTechnicians }) {
 }
 
 // ===== USER TABLE =====
-function UserTable({ users, setUsers }) {
+function UserTable({ users, setUsers, loading }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
@@ -1558,7 +1559,7 @@ function UserTable({ users, setUsers }) {
 }
 
 // ===== DASHBOARD OVERVIEW =====
-function DashboardOverview({ technicians, users }) {
+function DashboardOverview({ technicians, users, loadingTechs, loadingUsers }) {
   const totalTechs = technicians.length;
   const activeTechs = technicians.filter((t) => t.status === "Active").length;
   const busyTechs = technicians.filter((t) => t.status === "Busy").length;
@@ -1576,28 +1577,28 @@ function DashboardOverview({ technicians, users }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
         <StatCard
           title="Total Technicians"
-          value={totalTechs}
+          value={loadingTechs ? "..." : totalTechs}
           icon={<FiTool className="text-[#1E3A8A]" />}
           color="#1E3A8A"
           bgColor="#EFF6FF"
         />
         <StatCard
           title="Active Technicians"
-          value={activeTechs}
+          value={loadingTechs ? "..." : activeTechs}
           icon={<FiCheckCircle className="text-[#16a34a]" />}
           color="#16a34a"
           bgColor="#f0fdf4"
         />
         <StatCard
           title="Busy Technicians"
-          value={busyTechs}
+          value={loadingTechs ? "..." : busyTechs}
           icon={<FiClock className="text-[#d97706]" />}
           color="#d97706"
           bgColor="#fffbeb"
         />
         <StatCard
           title="Total Users"
-          value={totalUsers}
+          value={loadingUsers ? "..." : totalUsers}
           icon={<FiUsers className="text-[#F97316]" />}
           color="#F97316"
           bgColor="#fff7ed"
@@ -1612,43 +1613,56 @@ function DashboardOverview({ technicians, users }) {
             <FiTool /> Recent Technicians
           </h3>
           <div className="space-y-5">
-            {technicians.slice(0, 4).map((tech) => (
-              <div key={tech.id} className="flex items-center gap-3">
-                <img
-                  src={
-                    tech.image ||
-                    "https://randomuser.me/api/portraits/lego/1.jpg"
-                  }
-                  alt={tech.name}
-                  className="w-9 h-9 rounded-xl object-cover"
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-700 truncate">
-                    {tech.name}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    {tech.skill} · {tech.location}
-                  </p>
+            {loadingTechs ? (
+              <Spinner
+                fullScreen={false}
+                text="Loading recent technicians..."
+              />
+            ) : technicians.length > 0 ? (
+              technicians.slice(0, 4).map((tech) => (
+                <div key={tech.id} className="flex items-center gap-3">
+                  <img
+                    src={
+                      tech.image ||
+                      "https://randomuser.me/api/portraits/lego/1.jpg"
+                    }
+                    alt={tech.name}
+                    className="w-9 h-9 rounded-xl object-cover"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-700 truncate">
+                      {tech.name}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {tech.skill} · {tech.location}
+                    </p>
+                  </div>
+                  <span
+                    className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                      tech.status === "Active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-amber-100 text-amber-700"
+                    }`}
+                  >
+                    {tech.status === "Active" ? (
+                      <span className="flex items-center gap-2">
+                        <FiCheckCircle /> Active
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        <FiClock /> Busy
+                      </span>
+                    )}
+                  </span>
                 </div>
-                <span
-                  className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                    tech.status === "Active"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-amber-100 text-amber-700"
-                  }`}
-                >
-                  {tech.status === "Active" ? (
-                    <span className="flex items-center gap-2">
-                      <FiCheckCircle /> Active
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <FiClock /> Busy
-                    </span>
-                  )}
-                </span>
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-xl text-gray-500">
+                  No recent technicians found
+                </p>
               </div>
-            ))}
+            )}
           </div>
         </div>
 
@@ -1658,45 +1672,53 @@ function DashboardOverview({ technicians, users }) {
             <FiUsers /> Recent Users
           </h3>
           <div className="space-y-5">
-            {users.slice(0, 4).map((user) => (
-              <div key={user.id} className="flex items-center gap-3">
-                <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                  style={{ backgroundColor: "#1E3A8A" }}
-                >
-                  {user.email[0].toUpperCase()}
+            {loadingUsers ? (
+              <Spinner fullScreen={false} text="Loading recent users..." />
+            ) : users.length > 0 ? (
+              users.slice(0, 4).map((user) => (
+                <div key={user.id} className="flex items-center gap-3">
+                  <div
+                    className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                    style={{ backgroundColor: "#1E3A8A" }}
+                  >
+                    {user.email[0].toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-700 truncate">
+                      {user.email}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      Joined{" "}
+                      {new Date(user.dateJoined).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </div>
+                  <span
+                    className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                      user.status === "Active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-500"
+                    }`}
+                  >
+                    {user.status === "Active" ? (
+                      <span className="flex items-center gap-2">
+                        <FiCheckCircle /> Active
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        <FiMinusCircle /> Inactive
+                      </span>
+                    )}
+                  </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-700 truncate">
-                    {user.email}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    Joined{" "}
-                    {new Date(user.dateJoined).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </p>
-                </div>
-                <span
-                  className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                    user.status === "Active"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-gray-100 text-gray-500"
-                  }`}
-                >
-                  {user.status === "Active" ? (
-                    <span className="flex items-center gap-2">
-                      <FiCheckCircle /> Active
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <FiMinusCircle /> Inactive
-                    </span>
-                  )}
-                </span>
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-xl text-gray-500">No recent users found</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
@@ -1820,59 +1842,78 @@ function SettingsSection() {
 }
 
 // ===== MAIN ADMIN DASHBOARD =====
-export default function AdminDashboard() {
+export default function AdminDashboardPage() {
   const [activeSection, setActiveSection] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [technicians, setTechnicians] = useState([]);
+  const [loadingTechs, setLoadingTechs] = useState(true);
   const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
 
-  // Get Technicians
   useEffect(() => {
-    const fetchData = async () => {
+    // Get Technicians
+    const fetchTechs = async () => {
       try {
+        setLoadingTechs(true);
         const data = await getTechnicians();
         setTechnicians(data);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoadingTechs(false);
       }
     };
 
-    fetchData();
-  }, []);
-
-  // Get USers
-  useEffect(() => {
+    // Get USers
     const fetchUsers = async () => {
       try {
+        setLoadingUsers(true);
         const data = await getUsers();
         setUsers(data);
       } catch (err) {
         console.error(err);
       } finally {
-        // setLoading(false);
+        setLoadingUsers(false);
       }
     };
-
+    fetchTechs();
     fetchUsers();
   }, []);
 
   const renderSection = () => {
     switch (activeSection) {
       case "dashboard":
-        return <DashboardOverview technicians={technicians} users={users} />;
+        return (
+          <DashboardOverview
+            technicians={technicians}
+            users={users}
+            loadingTechs={loadingTechs}
+            loadingUsers={loadingUsers}
+          />
+        );
       case "technicians":
         return (
           <TechnicianTable
             technicians={technicians}
             setTechnicians={setTechnicians}
+            loading={loadingTechs}
           />
         );
       case "users":
-        return <UserTable users={users} setUsers={setUsers} />;
+        return (
+          <UserTable users={users} setUsers={setUsers} loading={loadingUsers} />
+        );
       case "settings":
         return <SettingsSection />;
       default:
-        return <DashboardOverview technicians={technicians} users={users} />;
+        return (
+          <DashboardOverview
+            technicians={technicians}
+            users={users}
+            loadingTechs={loadingTechs}
+            loadingUsers={loadingUsers}
+          />
+        );
     }
   };
 

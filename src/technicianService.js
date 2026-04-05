@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, getDoc, doc } from "firebase/firestore";
 
 export const addTechnician = async (data) => {
   try {
@@ -24,5 +24,16 @@ export const getTechnicians = async () => {
   } catch (error) {
     console.error("Error Feching technicians: ", error);
     throw error;
+  }
+};
+
+export const getTechnicianById = async (id) => {
+  const docRef = doc(db, "technicians", id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return { id: docSnap.id, ...docSnap.data() };
+  } else {
+    throw new Error("Technician not found");
   }
 };

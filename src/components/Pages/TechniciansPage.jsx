@@ -2,19 +2,26 @@ import { useState, useEffect } from "react";
 import { getTechnicians } from "../../technicianService";
 import { FiSearch } from "react-icons/fi";
 import TechnicianCard from "../UIS/TechnicianCard";
+import Spinner from "../UIS/Spinner";
 
-const UserDashboard = () => {
+const TechniciansPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [technicians, setTechnicians] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Get Technicians
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const data = await getTechnicians();
         setTechnicians(data);
       } catch (error) {
         console.error(error);
+        setError("Failed to load technicians");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -56,7 +63,9 @@ const UserDashboard = () => {
             </div>
           </div>
 
-          {filteredTechnicians.length > 0 ? (
+          {loading ? (
+            <Spinner fullScreen={false} text="Loading technicians..." />
+          ) : filteredTechnicians.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredTechnicians.map((technician) => (
                 <TechnicianCard key={technician.id} technician={technician} />
@@ -73,4 +82,4 @@ const UserDashboard = () => {
   );
 };
 
-export default UserDashboard;
+export default TechniciansPage;
