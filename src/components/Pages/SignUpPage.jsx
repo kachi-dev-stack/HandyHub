@@ -8,6 +8,7 @@ import { useAuth } from "../../AuthContext";
 function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [uiPasswordError, setUiPasswordError] = useState("");
   const { user, role } = useAuth();
@@ -34,10 +35,13 @@ function SignUpPage() {
       return;
     }
 
+    setLoading(true);
     try {
       await signup(email, password);
     } catch (err) {
       alert(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,9 +113,10 @@ function SignUpPage() {
               {/* Submit */}
               <button
                 type="submit"
+                disabled={loading}
                 className="w-full bg-[#F97316] text-white py-3 sm:py-3.5 rounded-lg font-semibold hover:bg-[#ea580c] transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all"
               >
-                Create Account
+                {loading ? "Creating account..." : "Create Account"}
               </button>
             </form>
 

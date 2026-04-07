@@ -14,53 +14,61 @@ import AdminDashboardPage from "./components/Pages/AdminDashboardPage";
 import ScrollToTop from "./ScrollToTop";
 import UserLayout from "./components/Layout/UserLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
-
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <>
-      <Route
-        path="/"
-        element={
-          <>
-            <ScrollToTop />
-            <MainLayout />
-          </>
-        }
-      >
-        <Route index element={<LandingPage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="signup" element={<SignUpPage />} />
-      </Route>
-
-      {/* User */}
-      <Route
-        path="/technicians"
-        element={
-          <>
-            <ProtectedRoute role="user">
-              <ScrollToTop />
-              <UserLayout />
-            </ProtectedRoute>
-          </>
-        }
-      >
-        <Route index element={<TechniciansPage />} />
-        <Route path="technician/:id" element={<TechnicianProfilePage />} />
-      </Route>
-      {/* Admin */}
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute role="admin">
-            <AdminDashboardPage />
-          </ProtectedRoute>
-        }
-      />
-    </>,
-  ),
-);
+import { useAuth } from "./AuthContext";
+import Spinner from "./components/UIS/Spinner";
 
 const App = () => {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return <Spinner />;
+  }
+
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <>
+        <Route
+          path="/"
+          element={
+            <>
+              <ScrollToTop />
+              <MainLayout />
+            </>
+          }
+        >
+          <Route index element={<LandingPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignUpPage />} />
+        </Route>
+
+        {/* User */}
+        <Route
+          path="/technicians"
+          element={
+            <>
+              <ProtectedRoute role="user">
+                <ScrollToTop />
+                <UserLayout />
+              </ProtectedRoute>
+            </>
+          }
+        >
+          <Route index element={<TechniciansPage />} />
+          <Route path="technician/:id" element={<TechnicianProfilePage />} />
+        </Route>
+        {/* Admin */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+      </>,
+    ),
+  );
+
   return <RouterProvider router={router} />;
 };
 

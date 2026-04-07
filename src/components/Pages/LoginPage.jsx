@@ -4,10 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../auth";
 import PasswordInput from "../UIS/PasswordInput";
 import { useAuth } from "../../AuthContext";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "../../firebase";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [loadingReset, setLoadingReset] = useState(false);
   const { user, role } = useAuth();
   const navigate = useNavigate();
 
@@ -26,10 +30,30 @@ function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setLoading(true);
+
     try {
       await login(email, password);
     } catch (err) {
       alert(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleForgotPassword = async () => {
+    if (!email) {
+      alert("Please enter your email first.");
+      return;
+    }
+
+    try {
+      setLoadingReset(true);
+      await sendPasswordResetEmail(auth, email);
+      alert("Password reset email sent!");
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setLoadingReset(false);
     }
   };
 
@@ -74,8 +98,8 @@ function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
               {/* Remember Me & Forgot Password */}
-              <div className="flex flex-col sm:flex-row items-center justify-between">
-                <div className="flex items-center mb-3 sm:mb-0">
+              <div className="flex justify-end">
+                {/* <div className="flex items-center mb-3 sm:mb-0">
                   <input
                     id="remember-me"
                     type="checkbox"
@@ -87,22 +111,24 @@ function LoginPage() {
                   >
                     Remember me
                   </label>
-                </div>
+                </div> */}
 
-                <a
-                  href="/forgot-password"
+                <Link
+                  to="#"
+                  onClick={() => handleForgotPassword()}
                   className="text-sm text-[#1E3A8A] hover:text-[#F97316] transition-colors font-medium"
                 >
-                  Forgot password?
-                </a>
+                  {loadingReset ? "Sending..." : "Forgot password?"}
+                </Link>
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
+                disabled={loading}
                 className="w-full bg-[#F97316] text-white py-3 sm:py-3.5 rounded-lg font-semibold hover:bg-[#ea580c] transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all"
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </button>
             </form>
 

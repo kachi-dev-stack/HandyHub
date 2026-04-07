@@ -80,7 +80,7 @@ function Sidebar({
               className="w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold text-white"
               style={{ backgroundColor: "#F97316" }}
             >
-              HH
+              H
             </div>
             <div>
               <h1 className="text-white font-bold text-lg leading-tight">
@@ -1537,46 +1537,6 @@ function SettingsSection() {
           </div>
         </div>
 
-        {/* Preferences */}
-        {/* <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h3 className="font-bold text-gray-700 mb-4 flex items-center gap-2">
-            <span>⚙️</span> Preferences
-          </h3>
-          <div className="space-y-3">
-            {[
-              "Email Notifications",
-              "SMS Alerts",
-              "New Technician Sign-ups",
-            ].map((pref) => (
-              <div
-                key={pref}
-                className="flex items-center justify-between py-2 border-b border-gray-50 last:border-b-0"
-              >
-                <span className="text-sm text-gray-600">{pref}</span>
-                <button
-                  onClick={(e) => {
-                    const btn = e.currentTarget;
-                    const isOn = btn.dataset.on === "true";
-                    btn.dataset.on = isOn ? "false" : "true";
-                    btn.style.backgroundColor = isOn ? "#e5e7eb" : "#F97316";
-                    btn.querySelector(".knob").style.transform = isOn
-                      ? "translateX(0)"
-                      : "translateX(20px)";
-                  }}
-                  data-on="true"
-                  className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200"
-                  style={{ backgroundColor: "#F97316" }}
-                >
-                  <span
-                    className="knob inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200"
-                    style={{ transform: "translateX(20px)" }}
-                  ></span>
-                </button>
-              </div>
-            ))}
-          </div>
-        </div> */}
-
         {/* Danger Zone */}
         <div className="bg-white rounded-2xl shadow-sm border border-red-100 p-6">
           <h3 className="font-bold text-red-600 mb-4 flex items-center gap-2">
@@ -1584,20 +1544,20 @@ function SettingsSection() {
           </h3>
           <div className="space-y-3">
             <button
+              onClick={() => alert("Email changed")}
+              className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-medium text-gray-700"
+            >
+              <span>Change Email</span>
+              <span className="text-gray-400">→</span>
+            </button>
+            <button
               onClick={() =>
-                alert("Password reset email sent to admin@handyhub.com")
+                alert(`Password reset email sent to ${ADMIN_EMAIL}`)
               }
               className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-medium text-gray-700"
             >
               <span>Change Password</span>
               <span className="text-gray-400">→</span>
-            </button>
-            <button
-              onClick={() => alert("Logged out!")}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-red-50 hover:bg-red-100 transition-colors text-sm font-semibold text-red-600"
-            >
-              <span>Logout</span>
-              <FiLogOut />
             </button>
           </div>
         </div>
