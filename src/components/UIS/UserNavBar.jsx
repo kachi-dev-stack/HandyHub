@@ -1,9 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { USER_EMAIL } from "../../config";
 import { FiLogOut } from "react-icons/fi";
 import { logout } from "../../auth";
+import { useAuth } from "../../AuthContext";
 const UserNavBar = () => {
+  const { user } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef();
   const navigate = useNavigate();
@@ -49,9 +50,9 @@ const UserNavBar = () => {
                   className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
                   style={{ backgroundColor: "#1E3A8A" }}
                 >
-                  {USER_EMAIL[0].toUpperCase()}
+                  {user?.email?.[0]?.toUpperCase()}
                 </div>
-                <span className="text-sm text-gray-600">{USER_EMAIL}</span>
+                <span className="text-sm text-gray-600">{user?.email}</span>
               </div>
               <button
                 onClick={handleLogout}
@@ -69,14 +70,14 @@ const UserNavBar = () => {
                 className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm"
                 style={{ backgroundColor: "#F97316" }}
               >
-                {USER_EMAIL[0].toUpperCase()}
+                {user?.email?.[0]?.toUpperCase()}
               </button>
 
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white text-gray-800 rounded-xl shadow-xl overflow-hidden z-50 animate-fadeIn">
                   <div className="px-4 py-3 border-b border-gray-200">
                     <p className="text-sm font-medium text-gray-700 break-words">
-                      {USER_EMAIL}
+                      {user?.email}
                     </p>
                   </div>
                   <button

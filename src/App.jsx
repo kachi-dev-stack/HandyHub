@@ -31,11 +31,13 @@ const router = createBrowserRouter(
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignUpPage />} />
       </Route>
+
+      {/* User */}
       <Route
         path="/technicians"
         element={
           <>
-            <ProtectedRoute>
+            <ProtectedRoute role="user">
               <ScrollToTop />
               <UserLayout />
             </ProtectedRoute>
@@ -45,10 +47,11 @@ const router = createBrowserRouter(
         <Route index element={<TechniciansPage />} />
         <Route path="technician/:id" element={<TechnicianProfilePage />} />
       </Route>
+      {/* Admin */}
       <Route
         path="/admin"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute role="admin">
             <AdminDashboardPage />
           </ProtectedRoute>
         }

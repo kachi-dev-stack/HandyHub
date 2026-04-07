@@ -1,5 +1,5 @@
 export const ADMIN_EMAIL = "wonyekachi67@gmail.com";
-export const USER_EMAIL = "conyekachi007@gmail.com";
+// export const USER_EMAIL = "conyekachi007@gmail.com";
 
 // const portfolio = [
 //   {

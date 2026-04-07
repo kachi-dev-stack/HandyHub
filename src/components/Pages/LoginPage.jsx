@@ -1,26 +1,33 @@
 import { FiMail, FiLock } from "react-icons/fi";
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../auth";
 import PasswordInput from "../UIS/PasswordInput";
-import { ADMIN_EMAIL } from "../../config";
+import { useAuth } from "../../AuthContext";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const { user, role } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || !role) return;
+
+    if (role === "admin") {
+      navigate("/admin");
+    } else if (role === "user") {
+      navigate("/technicians");
+    } else {
+      navigate("/");
+    }
+  }, [user, role]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await login(email, password);
-
-      if (res.user.email === ADMIN_EMAIL) {
-        navigate("/admin");
-      } else {
-        navigate("/technicians");
-      }
+      await login(email, password);
     } catch (err) {
       alert(err.message);
     }

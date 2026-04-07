@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { NavLink, Link, useLocation } from "react-router-dom";
+import { seedUsers } from "../../seed/seedUsers";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);

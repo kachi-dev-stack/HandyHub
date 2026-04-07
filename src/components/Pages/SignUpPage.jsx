@@ -1,17 +1,29 @@
 import { FiUser, FiMail, FiLock, FiCheckCircle } from "react-icons/fi";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signup } from "../../auth";
 import { Link, useNavigate } from "react-router-dom";
-import { ADMIN_EMAIL } from "../../config";
 import PasswordInput from "../UIS/PasswordInput";
+import { useAuth } from "../../AuthContext";
 
 function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [uiPasswordError, setUiPasswordError] = useState("");
-
+  const { user, role } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || !role) return;
+
+    if (role === "admin") {
+      navigate("/admin");
+    } else if (role === "user") {
+      navigate("/technicians");
+    } else {
+      navigate("/");
+    }
+  }, [user, role]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,13 +35,7 @@ function SignUpPage() {
     }
 
     try {
-      const res = await signup(email, password);
-
-      if (res.user.email === ADMIN_EMAIL) {
-        navigate("/admin");
-      } else {
-        navigate("/technicians");
-      }
+      await signup(email, password);
     } catch (err) {
       alert(err.message);
     }

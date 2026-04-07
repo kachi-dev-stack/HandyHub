@@ -32,6 +32,8 @@ import { getUsers } from "../../userService";
 import Spinner from "../UIS/Spinner";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../auth";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 // ===== SIDEBAR =====
 function Sidebar({
   activeSection,
@@ -1046,20 +1048,54 @@ function UserTable({ users, setUsers, refreshUsers, loading }) {
     return matchSearch && matchStatus;
   });
 
-  const toggleStatus = (id) => {
-    setUsers(
-      users.map((u) =>
-        u.id === id
-          ? { ...u, status: u.status === "Active" ? "Inactive" : "Active" }
-          : u,
-      ),
-    );
+  const toggleStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
+
+    try {
+      await updateDoc(doc(db, "users", id), {
+        status: newStatus,
+      });
+
+      // Update UI
+      setUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, status: newStatus } : u)),
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const deleteUser = (id) => {
-    if (confirm("Delete this user?")) {
-      setUsers(users.filter((u) => u.id !== id));
+  // Delete User
+  const deleteUser = async (id) => {
+    if (!confirm("Delete this user?")) return;
+
+    try {
+      await deleteDoc(doc(db, "users", id));
+
+      setUsers((prev) => prev.filter((u) => u.id !== id));
+    } catch (error) {
+      console.error(error);
     }
+  };
+
+  // Format Date
+  const formateDate = (date) => {
+    if (!date) return "N/A";
+
+    // Firestore Timestamp
+    if (typeof date.toDate === "function") {
+      return date.toDate().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    }
+
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   };
 
   return (
@@ -1170,16 +1206,12 @@ function UserTable({ users, setUsers, refreshUsers, loading }) {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
-                    {new Date(user.dateJoined).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
+                    {formateDate(user.dateJoined)}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <button
-                        onClick={() => toggleStatus(user.id)}
+                        onClick={() => toggleStatus(user.id, user.status)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                           user.status === "Active"
                             ? "bg-amber-50 text-amber-600 hover:bg-amber-100"
@@ -1216,7 +1248,9 @@ function UserTable({ users, setUsers, refreshUsers, loading }) {
 
       {/* Mobile Cards */}
       <div className="md:hidden space-y-4">
-        {filtered.length === 0 ? (
+        {loading ? (
+          <Spinner />
+        ) : filtered.length === 0 ? (
           <div className="bg-white rounded-2xl p-8 text-center text-gray-400 text-sm shadow-sm border border-gray-100">
             No users found
           </div>
@@ -1239,12 +1273,7 @@ function UserTable({ users, setUsers, refreshUsers, loading }) {
                       {user.email}
                     </p>
                     <p className="text-xs text-gray-400">
-                      Joined:{" "}
-                      {new Date(user.dateJoined).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      Joined:{formateDate(user.dateJoined)}
                     </p>
                   </div>
                 </div>
@@ -1268,7 +1297,7 @@ function UserTable({ users, setUsers, refreshUsers, loading }) {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => toggleStatus(user.id)}
+                  onClick={() => toggleStatus(user.id, user.status)}
                   className={`flex-1 py-2 rounded-xl text-xs font-medium ${
                     user.status === "Active"
                       ? "bg-amber-50 text-amber-600"
@@ -1604,7 +1633,8 @@ export default function AdminDashboardPage() {
     try {
       setLoadingUsers(true);
       const data = await getUsers();
-      setUsers(data);
+      const normalUsers = data.filter((u) => u.role === "user");
+      setUsers(normalUsers);
     } catch (err) {
       console.error(err);
     } finally {
