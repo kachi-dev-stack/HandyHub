@@ -36,8 +36,15 @@ function SignUpPage() {
     }
 
     setLoading(true);
+
     try {
-      await signup(email, password);
+      const user = await signup(email, password);
+
+      alert(
+        `Verification email sent to ${user.email}. Please check your inbox and verify before logging`,
+      );
+
+      navigate("/login");
     } catch (err) {
       alert(err.message);
     } finally {

@@ -14,16 +14,8 @@ import AdminDashboardPage from "./components/Pages/AdminDashboardPage";
 import ScrollToTop from "./ScrollToTop";
 import UserLayout from "./components/Layout/UserLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { useAuth } from "./AuthContext";
-import Spinner from "./components/UIS/Spinner";
 
 const App = () => {
-  const { loading } = useAuth();
-
-  if (loading) {
-    return <Spinner />;
-  }
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>

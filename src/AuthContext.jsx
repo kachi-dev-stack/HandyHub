@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth, db } from "./firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, reload, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import Spinner from "./components/UIS/Spinner";
 
 const AuthContext = createContext();
 
@@ -14,6 +15,9 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       try {
         if (currentUser) {
+          // Reload the user to get fresh info from firebase
+          await reload(currentUser);
+
           const docRef = doc(db, "users", currentUser.uid);
           const docSnap = await getDoc(docRef);
 
@@ -26,9 +30,20 @@ export function AuthProvider({ children }) {
 
           const userData = docSnap.data();
 
+          // lock inactive users
           if (userData.status === "Inactive") {
             await signOut(auth);
             alert("Your account has been deactivated. ");
+            setUser(null);
+            setRole(null);
+            return;
+          }
+
+          // Force logout if email in firestore != auth email
+
+          if (userData.email && userData.email !== currentUser.email) {
+            await signOut(auth);
+            alert("Email changed. Please log in again with your new email. ");
             setUser(null);
             setRole(null);
             return;
@@ -53,7 +68,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={{ user, role, loading }}>
-      {!loading && children}
+      {loading ? <Spinner /> : children}
     </AuthContext.Provider>
   );
 }

@@ -1,13 +1,13 @@
 import { auth } from "./firebase";
 import {
   createUserWithEmailAndPassword,
+  reload,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
 import { db } from "./firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
-
-const ADMIN_EMAIL = "wonyekachi67@gmail.com";
 
 // Sign Up
 export const signup = async (email, password) => {
@@ -19,13 +19,11 @@ export const signup = async (email, password) => {
     );
     const user = userCredential.user;
 
-    await setDoc(doc(db, "users", user.uid), {
-      email: user.email,
-      role: user.email === ADMIN_EMAIL ? "admin" : "user",
-      status: "Active",
-      dateJoined: serverTimestamp(),
-    });
-    return userCredential;
+    await sendEmailVerification(user);
+
+    await signOut(auth);
+
+    return user;
   } catch (error) {
     console.error("Signup error:", error);
     throw error;
@@ -42,6 +40,12 @@ export const login = async (email, password) => {
 
     const user = userCredential.user;
 
+    await reload(user);
+    if (!user.emailVerified) {
+      throw Error("Please verify your email before logging in. ");
+    }
+
+    // Save user info to Firestore if it doesn't exist yet
     const docRef = doc(db, "users", user.uid);
     const docSnap = await getDoc(docRef);
 
@@ -50,7 +54,7 @@ export const login = async (email, password) => {
     if (!docSnap.exists()) {
       userData = {
         email: user.email,
-        role: user.email === ADMIN_EMAIL ? "admin" : "user",
+        role: "user",
         status: "Active",
         dateJoined: serverTimestamp(),
       };

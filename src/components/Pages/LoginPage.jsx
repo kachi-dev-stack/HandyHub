@@ -49,7 +49,7 @@ function LoginPage() {
     try {
       setLoadingReset(true);
       await sendPasswordResetEmail(auth, email);
-      alert("Password reset email sent!");
+      alert(`Password reset email sent to ${email}`);
     } catch (error) {
       alert(error.message);
     } finally {

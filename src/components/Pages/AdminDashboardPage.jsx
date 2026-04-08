@@ -21,7 +21,6 @@ import {
   FiAlertTriangle,
   FiShield,
 } from "react-icons/fi";
-import { ADMIN_EMAIL } from "../../config";
 import {
   addTechnician,
   deleteTechnician,
@@ -33,7 +32,13 @@ import Spinner from "../UIS/Spinner";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../auth";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { auth, db } from "../../firebase";
+import { useAuth } from "../../AuthContext";
+import {
+  reload,
+  sendPasswordResetEmail,
+  verifyBeforeUpdateEmail,
+} from "firebase/auth";
 // ===== SIDEBAR =====
 function Sidebar({
   activeSection,
@@ -133,6 +138,7 @@ function Sidebar({
 
 // ===== NAVBAR =====
 function Navbar({ sidebarOpen, setSidebarOpen }) {
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -167,9 +173,9 @@ function Navbar({ sidebarOpen, setSidebarOpen }) {
             className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
             style={{ backgroundColor: "#1E3A8A" }}
           >
-            {ADMIN_EMAIL[0].toUpperCase()}
+            {user?.email?.[0]?.toUpperCase()}
           </div>
-          <span className="text-sm text-gray-600">{ADMIN_EMAIL}</span>
+          <span className="text-sm text-gray-600">{user?.email}</span>
         </div>
         <button
           onClick={handleLogout}
@@ -1493,6 +1499,36 @@ function DashboardOverview({ technicians, users, loadingTechs, loadingUsers }) {
 
 // ===== SETTINGS SECTION =====
 function SettingsSection() {
+  const { user, role } = useAuth();
+
+  //  Change Email
+  const handleChangeEmail = async () => {
+    const newEmail = prompt("Enter new email");
+
+    if (!newEmail) return;
+
+    try {
+      await verifyBeforeUpdateEmail(auth.currentUser, newEmail);
+      alert("Verification email sent. please verify before change");
+
+      await reload(auth.currentUser);
+    } catch (error) {
+      if (error.code === "auth/requires-recent-login") {
+        alert("Please log out and log in again before changing email.");
+      } else {
+        alert(error.message);
+      }
+    }
+  };
+  // Change Password
+  const handleChangePassword = async () => {
+    try {
+      await sendPasswordResetEmail(auth, user.email);
+      alert(`Password reset email sent to ${user.email}`);
+    } catch (error) {
+      alert(error);
+    }
+  };
   return (
     <div>
       <div className="mb-6">
@@ -1516,7 +1552,7 @@ function SettingsSection() {
               <div className="flex items-center gap-3 bg-gray-50 px-4 py-3 rounded-xl border border-gray-100">
                 <FiMail />
                 <span className="text-sm font-medium text-gray-700">
-                  {ADMIN_EMAIL}
+                  {user?.email}
                 </span>
                 <span className="ml-auto px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
                   Verified
@@ -1530,30 +1566,28 @@ function SettingsSection() {
               <div className="flex items-center gap-3 bg-gray-50 px-4 py-3 rounded-xl border border-gray-100">
                 <FiShield />
                 <span className="text-sm font-medium text-gray-700">
-                  Super Administrator
+                  {role === "admin" ? "Super Administrator" : "User"}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Danger Zone */}
+        {/* Actions */}
         <div className="bg-white rounded-2xl shadow-sm border border-red-100 p-6">
           <h3 className="font-bold text-red-600 mb-4 flex items-center gap-2">
             <FiAlertTriangle /> Account Actions
           </h3>
           <div className="space-y-3">
             <button
-              onClick={() => alert("Email changed")}
+              onClick={handleChangeEmail}
               className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-medium text-gray-700"
             >
               <span>Change Email</span>
               <span className="text-gray-400">→</span>
             </button>
             <button
-              onClick={() =>
-                alert(`Password reset email sent to ${ADMIN_EMAIL}`)
-              }
+              onClick={handleChangePassword}
               className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-medium text-gray-700"
             >
               <span>Change Password</span>
