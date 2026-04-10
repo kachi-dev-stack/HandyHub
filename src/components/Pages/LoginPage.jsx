@@ -6,12 +6,14 @@ import PasswordInput from "../UIS/PasswordInput";
 import { useAuth } from "../../AuthContext";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebase";
+import ErrorCard from "../UIS/ErrorCard";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingReset, setLoadingReset] = useState(false);
+  const [error, setError] = useState("");
   const { user, role } = useAuth();
   const navigate = useNavigate();
 
@@ -27,19 +29,40 @@ function LoginPage() {
     }
   }, [user, role]);
 
+  useEffect(() => {
+    if (!error) return;
+
+    const timer = setTimeout(() => {
+      setError("");
+    }, 4000); // 4 seconds
+
+    return () => clearTimeout(timer);
+  }, [error]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setLoading(true);
+    setError("");
+
+    const timeout = setTimeout(() => {
+      setLoading(false);
+      setError("Unknown error occurred. Please try again.");
+    }, 10000); // 10 seconds max wait
 
     try {
       await login(email, password);
+
+      clearTimeout(timeout);
     } catch (err) {
-      alert(err.message);
+      clearTimeout(timeout);
+
+      setError(err?.message || "Unknown error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
   const handleForgotPassword = async () => {
     if (!email) {
       alert("Please enter your email first.");
@@ -69,6 +92,8 @@ function LoginPage() {
                 <div className="w-10 h-10 border-4 border-[#F97316] border-t-transparent rounded-full animate-spin"></div>
               </div>
             )}
+            {/* ERROR*/}
+            {error && <ErrorCard message={error} />}
 
             {/* Header */}
             <div className="text-center mb-8 sm:mb-10"></div>

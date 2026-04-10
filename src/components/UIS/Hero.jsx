@@ -8,7 +8,7 @@ function Hero() {
       id="home"
       className="relative  bg-gradient-to-br from-[#1E3A8A] via-[#1E40AF] to-[#2563EB] text-white overflow-hidden"
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-30 sm:py-20 sm:pb-30 lg:pt-30 lg:pb-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-30 sm:py-20 sm:pb-30 lg:pt-30 lg:pb-50">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* TEXT */}
           <div className="text-center lg:text-left">
@@ -42,12 +42,24 @@ function Hero() {
           </div>
 
           {/* IMAGE */}
-          <div className="relative flex justify-center lg:justify-end">
+          <div className="relative flex justify-center lg:justify-end  ">
             <img
               src={heroImage}
               alt="Skilled technicians"
-              className="w-full max-w-md lg:max-w-lg xl:max-w-xl h-auto"
+              className="w-full max-w-md lg:max-w-lg xl:max-w-xl h-auto relative bottom-[15px]"
             />
+            <div className="absolute bottom-0 left-0 right-0">
+              <svg
+                viewBox="0 0 1440 120"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z"
+                  fill="#1E40AF"
+                />
+              </svg>
+            </div>
           </div>
         </div>
       </div>
