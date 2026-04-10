@@ -234,55 +234,71 @@ function TechnicianForm({ tech, onClose, onSave }) {
   }, [tech]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    const { name, value } = e.target;
 
-  const handleProfileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) setForm({ ...form, image: URL.createObjectURL(file) });
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handlePortfolioChange = (index, field, value) => {
-    const updated = [...form.portfolio];
-    updated[index][field] = value;
-    setForm({ ...form, portfolio: updated });
-  };
+    setForm((prev) => {
+      const updatedPortfolio = [...prev.portfolio];
 
-  const addPortfolioInput = () => {
-    setForm({
-      ...form,
-      portfolio: [...form.portfolio, { url: "", title: "" }],
+      updatedPortfolio[index] = {
+        ...updatedPortfolio[index],
+        [field]: value,
+      };
+
+      return {
+        ...prev,
+        portfolio: updatedPortfolio,
+      };
     });
   };
 
+  const addPortfolioInput = () => {
+    setForm((prev) => ({
+      ...prev,
+      portfolio: [...prev.portfolio, { url: "", title: "" }],
+    }));
+  };
+
   const removePortfolioInput = (index) => {
-    const updated = form.portfolio.filter((_, i) => i !== index);
-    setForm({ ...form, portfolio: updated });
+    setForm((prev) => ({
+      ...prev,
+      portfolio: prev.portfolio.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (loading) return;
-
     setLoading(true);
 
     try {
       await onSave(form);
       onClose();
     } catch (error) {
-      alert("Error adding technician");
+      console.error(error);
+      alert("Error saving technician");
     } finally {
       setLoading(false);
     }
   };
 
-  const [profileTab, setProfileTab] = useState("url");
-  const [portfolioTab, setPortfolioTab] = useState("url");
-
   return (
     <div className="fixed inset-0 bg-transparent bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* Loading */}
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+            <div className="w-10 h-10 border-4 border-[#F97316] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+
         <div className="p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
           <h3 className="text-xl font-bold text-gray-800">
             {tech ? "Edit Technician" : "Add New Technician"}
@@ -306,9 +322,10 @@ function TechnicianForm({ tech, onClose, onSave }) {
                 name="name"
                 value={form.name}
                 onChange={handleChange}
+                disabled={loading}
                 required
                 placeholder="John Doe"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:border-transparent text-sm"
+                className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:border-transparent text-sm"
                 style={{ "--tw-ring-color": "#F97316" }}
                 onFocus={(e) =>
                   (e.target.style.boxShadow = "0 0 0 2px #F97316")
@@ -326,9 +343,10 @@ function TechnicianForm({ tech, onClose, onSave }) {
                 name="skill"
                 value={form.skill}
                 onChange={handleChange}
+                disabled={loading}
                 required
                 placeholder="e.g. Plumber, Electrician"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
+                className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
                 onFocus={(e) =>
                   (e.target.style.boxShadow = "0 0 0 2px #F97316")
                 }
@@ -344,9 +362,10 @@ function TechnicianForm({ tech, onClose, onSave }) {
                 name="location"
                 value={form.location}
                 onChange={handleChange}
+                disabled={loading}
                 required
                 placeholder="City, State"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
+                className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
                 onFocus={(e) =>
                   (e.target.style.boxShadow = "0 0 0 2px #F97316")
                 }
@@ -362,7 +381,8 @@ function TechnicianForm({ tech, onClose, onSave }) {
                 name="status"
                 value={form.status}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm bg-white"
+                disabled={loading}
+                className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm bg-white"
                 onFocus={(e) =>
                   (e.target.style.boxShadow = "0 0 0 2px #F97316")
                 }
@@ -382,9 +402,10 @@ function TechnicianForm({ tech, onClose, onSave }) {
                 type="email"
                 value={form.email}
                 onChange={handleChange}
+                disabled={loading}
                 required
                 placeholder="email@example.com"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
+                className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
                 onFocus={(e) =>
                   (e.target.style.boxShadow = "0 0 0 2px #F97316")
                 }
@@ -400,8 +421,9 @@ function TechnicianForm({ tech, onClose, onSave }) {
                 name="phone"
                 value={form.phone}
                 onChange={handleChange}
+                disabled={loading}
                 placeholder="+1 (555) 000-0000"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
+                className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
                 onFocus={(e) =>
                   (e.target.style.boxShadow = "0 0 0 2px #F97316")
                 }
@@ -415,38 +437,15 @@ function TechnicianForm({ tech, onClose, onSave }) {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Profile Image *
             </label>
-            <div className="flex gap-2 mb-2">
-              <button
-                type="button"
-                className={`px-3 py-1 rounded-xl ${profileTab === "url" ? "bg-orange-500 text-white" : "bg-gray-100"}`}
-                onClick={() => setProfileTab("url")}
-              >
-                URL
-              </button>
-              <button
-                type="button"
-                className={`px-3 py-1 rounded-xl ${profileTab === "upload" ? "bg-orange-500 text-white" : "bg-gray-100"}`}
-                onClick={() => setProfileTab("upload")}
-              >
-                Upload
-              </button>
-            </div>
-            {profileTab === "url" ? (
-              <input
-                name="image"
-                value={form.image}
-                onChange={handleChange}
-                placeholder="https://example.com/photo.jpg"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
-              />
-            ) : (
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleProfileUpload}
-                className="w-full text-sm"
-              />
-            )}
+
+            <input
+              name="image"
+              value={form.image || ""}
+              onChange={handleChange}
+              disabled={loading}
+              placeholder="https://example.com/photo.jpg"
+              className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
+            />
           </div>
 
           {/* BIO */}
@@ -456,11 +455,12 @@ function TechnicianForm({ tech, onClose, onSave }) {
             </label>
             <textarea
               name="bio"
-              value={form.bio}
+              value={form.bio || ""}
               onChange={handleChange}
+              disabled={loading}
               rows={3}
               placeholder="Brief description of experience and specializations..."
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm resize-none"
+              className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm resize-none"
               onFocus={(e) => (e.target.style.boxShadow = "0 0 0 2px #F97316")}
               onBlur={(e) => (e.target.style.boxShadow = "")}
             />
@@ -472,73 +472,50 @@ function TechnicianForm({ tech, onClose, onSave }) {
               <label className="block text-sm font-medium text-gray-700">
                 Portfolio Images *
               </label>
+
               <button
                 type="button"
                 onClick={addPortfolioInput}
-                className="text-xs px-3 py-1 rounded-lg font-medium text-white bg-orange-500"
+                disabled={loading}
+                className="disabled:opacity-50 disabled:cursor-not-allowed text-xs px-3 py-1 rounded-lg font-medium text-white bg-orange-500"
               >
                 + Add
-              </button>
-            </div>
-            <div className="flex gap-2 mb-2">
-              <button
-                type="button"
-                className={`px-3 py-1 rounded-xl ${portfolioTab === "url" ? "bg-orange-500 text-white" : "bg-gray-100"}`}
-                onClick={() => setPortfolioTab("url")}
-              >
-                URL
-              </button>
-              <button
-                type="button"
-                className={`px-3 py-1 rounded-xl ${portfolioTab === "upload" ? "bg-orange-500 text-white" : "bg-gray-100"}`}
-                onClick={() => setPortfolioTab("upload")}
-              >
-                Upload
               </button>
             </div>
 
             <div className="space-y-2">
               {form.portfolio.map((item, index) => (
                 <div key={index} className="flex gap-2 items-start">
-                  {portfolioTab === "url" ? (
-                    <input
-                      value={item.url}
-                      onChange={(e) =>
-                        handlePortfolioChange(index, "url", e.target.value)
-                      }
-                      placeholder={`Portfolio image ${index + 1} URL`}
-                      className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
-                    />
-                  ) : (
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handlePortfolioChange(
-                          index,
-                          "url",
-                          e.target.files[0]
-                            ? URL.createObjectURL(e.target.files[0])
-                            : "",
-                        )
-                      }
-                      className="flex-1 text-sm"
-                    />
-                  )}
+                  {/* URL INPUT ONLY */}
                   <input
-                    value={item.title}
+                    value={item.url || ""}
+                    disabled={loading}
+                    onChange={(e) =>
+                      handlePortfolioChange(index, "url", e.target.value)
+                    }
+                    placeholder={`Portfolio image ${index + 1} URL`}
+                    className="disabled:opacity-50 disabled:cursor-not-allowed flex-1 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
+                  />
+
+                  {/* TITLE INPUT */}
+                  <input
+                    value={item.title || ""}
+                    disabled={loading}
                     onChange={(e) =>
                       handlePortfolioChange(index, "title", e.target.value)
                     }
                     placeholder="Image Title"
-                    className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
+                    className="disabled:opacity-50 disabled:cursor-not-allowed flex-1 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm"
                     required
                   />
+
+                  {/* REMOVE BUTTON */}
                   {form.portfolio.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removePortfolioInput(index)}
-                      className="px-3 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-colors text-sm"
+                      disabled={loading}
+                      className="disabled:opacity-50 disabled:cursor-not-allowed px-3 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-colors text-sm"
                     >
                       <FiX />
                     </button>
@@ -553,14 +530,15 @@ function TechnicianForm({ tech, onClose, onSave }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-3 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium text-sm transition-colors"
+              disabled={loading}
+              className="disabled:opacity-50 disabled:cursor-not-allowed flex-1 px-6 py-3 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium text-sm transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-6 py-3 rounded-xl text-white font-medium text-sm transition-colors"
+              className="disabled:cursor-not-allowed flex-1 px-6 py-3 rounded-xl text-white font-medium text-sm transition-colors"
               style={{ backgroundColor: "#F97316" }}
               onMouseEnter={(e) => (e.target.style.backgroundColor = "#ea6c0a")}
               onMouseLeave={(e) => (e.target.style.backgroundColor = "#F97316")}

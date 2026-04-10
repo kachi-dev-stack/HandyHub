@@ -8,6 +8,7 @@ import {
 } from "firebase/auth";
 import { db } from "./firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import { Await } from "react-router-dom";
 
 // Sign Up
 export const signup = async (email, password) => {
@@ -41,7 +42,9 @@ export const login = async (email, password) => {
     const user = userCredential.user;
 
     await reload(user);
+
     if (!user.emailVerified) {
+      await signOut(auth);
       throw Error("Please verify your email before logging in. ");
     }
 
@@ -51,16 +54,26 @@ export const login = async (email, password) => {
 
     let userData;
 
-    if (!docSnap.exists()) {
+    try {
+      if (!docSnap.exists()) {
+        userData = {
+          email: user.email,
+          role: "user",
+          status: "Active",
+          dateJoined: serverTimestamp(),
+        };
+        await setDoc(docRef, userData);
+      } else {
+        userData = docSnap.data();
+      }
+    } catch (error) {
+      console.error("Firestore error: ", error);
+
       userData = {
         email: user.email,
         role: "user",
         status: "Active",
-        dateJoined: serverTimestamp(),
       };
-      await setDoc(docRef, userData);
-    } else {
-      userData = docSnap.data();
     }
 
     if (userData.status === "Inactive") {

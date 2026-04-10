@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
-function PasswordInput({ placeholder, Icon, value, onChange }) {
+function PasswordInput({ placeholder, Icon, value, onChange, disable }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -18,8 +18,9 @@ function PasswordInput({ placeholder, Icon, value, onChange }) {
         type={showPassword ? "text" : "password"}
         placeholder={placeholder}
         value={value}
+        disabled={disable}
         onChange={onChange}
-        className={`w-full pl-12 pr-12 py-3 sm:py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent outline-none transition-all text-[#111827] placeholder-gray-400`}
+        className={`disabled:opacity-50 disabled:cursor-not-allowed w-full pl-12 pr-12 py-3 sm:py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent outline-none transition-all text-[#111827] placeholder-gray-400`}
         required
       />
 

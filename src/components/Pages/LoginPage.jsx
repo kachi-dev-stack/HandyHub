@@ -62,7 +62,16 @@ function LoginPage() {
     <div className=" flex flex-col">
       <main className="flex-grow bg-[#F3F4F6] py-12 px-4 sm:px-6 lg:px-12 ">
         <div className="max-w-lg md:max-w-xl lg:max-w-2xl mx-auto ">
-          <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-10 lg:p-12">
+          <div className="relative bg-white rounded-2xl shadow-xl p-6 sm:p-10 lg:p-12">
+            {/* Loading */}
+            {loading && (
+              <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                <div className="w-10 h-10 border-4 border-[#F97316] border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
+
+            {/* Header */}
+            <div className="text-center mb-8 sm:mb-10"></div>
             {/* Header */}
             <div className="text-center mb-8 sm:mb-10">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#111827] mb-2">
@@ -81,7 +90,8 @@ function LoginPage() {
                   <FiMail className="h-5 w-5 text-[#6B7280]" />
                 </div>
                 <input
-                  className="w-full pl-12 pr-4 py-3 sm:py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent outline-none transition-all text-[#111827] placeholder-gray-400"
+                  disabled={loading}
+                  className="disabled:opacity-50 disabled:cursor-not-allowed w-full pl-12 pr-4 py-3 sm:py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent outline-none transition-all text-[#111827] placeholder-gray-400"
                   placeholder="Email Address"
                   required
                   type="email"
@@ -92,27 +102,14 @@ function LoginPage() {
 
               {/* Password */}
               <PasswordInput
+                disable={loading}
                 placeholder="Password"
                 Icon={FiLock}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              {/* Remember Me & Forgot Password */}
+              {/*  Forgot Password */}
               <div className="flex justify-end">
-                {/* <div className="flex items-center mb-3 sm:mb-0">
-                  <input
-                    id="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 text-[#1E3A8A] focus:ring-[#1E3A8A] border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor="remember-me"
-                    className="ml-2 text-sm text-[#6B7280]"
-                  >
-                    Remember me
-                  </label>
-                </div> */}
-
                 <Link
                   to="#"
                   onClick={() => handleForgotPassword()}
@@ -126,7 +123,7 @@ function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#F97316] text-white py-3 sm:py-3.5 rounded-lg font-semibold hover:bg-[#ea580c] transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all"
+                className=" disabled:cursor-not-allowed w-full bg-[#F97316] text-white py-3 sm:py-3.5 rounded-lg font-semibold hover:bg-[#ea580c] transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all"
               >
                 {loading ? "Logging in..." : "Login"}
               </button>
