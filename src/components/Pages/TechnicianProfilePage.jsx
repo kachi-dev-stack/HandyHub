@@ -16,6 +16,7 @@ function TechnicianProfilePage() {
 
   const [technician, setTechnician] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [error, setError] = useState(null);
 
   // Get Technician
@@ -128,20 +129,51 @@ function TechnicianProfilePage() {
                   {portfolio?.map((project) => (
                     <div
                       key={project.id}
-                      className="relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                      onClick={() => setSelectedImage(project)}
+                      className="relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
                     >
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-40 sm:h-48 object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center">
-                        <p className="text-white text-sm font-semibold text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-3">
+                      <div className="w-full aspect-video">
+                        <img
+                          src={project.url}
+                          alt={project.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </div>
+
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                        <p className="text-white text-sm font-semibold text-center px-3">
                           {project.title}
                         </p>
                       </div>
                     </div>
                   ))}
+
+                  {selectedImage && (
+                    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+                      {/* CLOSE BUTTON */}
+
+                      <button
+                        onClick={() => setSelectedImage(null)}
+                        className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-orange-500 text-white text-2xl font-bold hover:bg-orange-500/70 transition"
+                      >
+                        ×
+                      </button>
+                      {/* IMAGE */}
+                      <div className="max-w-4xl w-full">
+                        <img
+                          src={selectedImage.url}
+                          alt={selectedImage.title}
+                          className="w-full max-h-[80vh] object-contain rounded-xl"
+                        />
+                        {/* TITLE */}
+                        <div className="mt-4 px-4 py-2 bg-orange-500 rounded-lg backdrop-blur-sm mx-auto w-fit">
+                          <p className="text-white text-sm font-bold text-center">
+                            {selectedImage.title}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </section>
             </div>
