@@ -1,7 +1,6 @@
 import { FiMail, FiLock } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { login } from "../../auth";
 import { login } from "../../firebase/auth/auth";
 import PasswordInput from "../UIS/PasswordInput";
 import { useAuth } from "../../AuthContext";

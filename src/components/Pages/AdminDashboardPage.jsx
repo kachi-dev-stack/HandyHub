@@ -30,7 +30,6 @@ import {
 import { getUsers } from "../../firebase/services/userService";
 import Spinner from "../UIS/Spinner";
 import { useNavigate } from "react-router-dom";
-// import { logout } from "../../auth";
 import { logout } from "../../firebase/auth/auth";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase/firebase";
@@ -555,6 +554,8 @@ function TechnicianForm({ tech, onClose, onSave }) {
 
 // ===== TECHNICIAN PROFILE PREVIEW =====
 function TechnicianProfile({ tech, onClose, onEdit, onDelete }) {
+  console.log(tech);
+  const [selectedImage, setSelectedImage] = useState(null);
   return (
     <div className="fixed inset-0 bg-transparent bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -647,21 +648,65 @@ function TechnicianProfile({ tech, onClose, onEdit, onDelete }) {
           )}
 
           {/* Portfolio */}
-          {tech.portfolio && tech.portfolio.filter(Boolean).length > 0 && (
+          {tech.portfolio?.filter(Boolean).length > 0 && (
             <div className="mb-6">
               <h4 className="text-sm font-semibold text-gray-700 mb-3">
                 Portfolio
               </h4>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {tech.portfolio.filter(Boolean).map((img, i) => (
-                  <img
-                    key={i}
-                    src={img}
-                    alt={`Portfolio ${i + 1}`}
-                    className="w-full h-28 object-cover rounded-xl shadow-sm"
-                  />
-                ))}
+
+              {/* PORTFOLIO GRID */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {tech.portfolio
+                  ?.filter((item) => item?.url)
+                  .map((project, i) => (
+                    <div
+                      key={i}
+                      onClick={() => setSelectedImage(project)}
+                      className="relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
+                    >
+                      <div className="w-full aspect-video">
+                        <img
+                          src={project.url}
+                          alt={project.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </div>
+
+                      {/* OVERLAY */}
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                        <p className="text-white text-sm font-semibold text-center px-3">
+                          {project.title}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
               </div>
+
+              {/* MODAL */}
+              {selectedImage && (
+                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+                  <button
+                    onClick={() => setSelectedImage(null)}
+                    className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-orange-500 text-white text-2xl font-bold hover:bg-orange-500/70 transition"
+                  >
+                    ×
+                  </button>
+
+                  <div className="max-w-4xl w-full">
+                    <img
+                      src={selectedImage.url}
+                      alt={selectedImage.title}
+                      className="w-full max-h-[80vh] object-contain rounded-xl"
+                    />
+
+                    <div className="mt-4 px-4 py-2 bg-orange-500 rounded-lg mx-auto w-fit">
+                      <p className="text-white text-sm font-bold text-center">
+                        {selectedImage.title}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
