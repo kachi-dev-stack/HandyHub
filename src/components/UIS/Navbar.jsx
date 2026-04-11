@@ -18,7 +18,6 @@ function Navbar() {
       ? "bg-[#EA580C] text-white px-6 py-2 rounded-lg font-medium shadow-lg scale-[0.98] transition-all"
       : "bg-[#F97316] hover:bg-[#EA580C] text-white px-6 py-2 rounded-lg font-medium transition-all shadow-md hover:shadow-lg";
 
-  const openMenu = () => setIsOpen(!false);
   const closeMenu = () => setIsOpen(false);
 
   const scrollToSection = (id) => {
@@ -75,7 +74,7 @@ function Navbar() {
           {/* MOBILE */}
           <div className="md:hidden">
             <button
-              onClick={openMenu}
+              onClick={() => setIsOpen((prev) => !prev)}
               className="text-white hover:text-[#F97316] transition-colors"
             >
               {isOpen ? <FaTimes size={28} /> : <FaBars size={28} />}
