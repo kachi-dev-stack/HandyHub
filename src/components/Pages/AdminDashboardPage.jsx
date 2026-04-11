@@ -554,7 +554,6 @@ function TechnicianForm({ tech, onClose, onSave }) {
 
 // ===== TECHNICIAN PROFILE PREVIEW =====
 function TechnicianProfile({ tech, onClose, onEdit, onDelete }) {
-  console.log(tech);
   const [selectedImage, setSelectedImage] = useState(null);
   return (
     <div className="fixed inset-0 bg-transparent bg-opacity-50 z-50 flex items-center justify-center p-4">
