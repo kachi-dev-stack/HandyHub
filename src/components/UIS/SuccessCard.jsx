@@ -36,17 +36,6 @@ function SuccessCard({ message, onClose }) {
 
         <p className="text-sm text-green-700 font-medium">{message}</p>
       </div>
-
-      {/* Close button */}
-      {/* {onClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-green-600 hover:text-green-800 text-xl font-bold leading-none"
-          >
-            ×
-          </button>
-        )} */}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth, db } from "./firebase";
+import { auth, db } from "./firebase/firebase";
 import { onAuthStateChanged, reload, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import Spinner from "./components/UIS/Spinner";

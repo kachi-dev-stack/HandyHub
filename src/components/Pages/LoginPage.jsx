@@ -1,11 +1,12 @@
 import { FiMail, FiLock } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../../auth";
+// import { login } from "../../auth";
+import { login } from "../../firebase/auth/auth";
 import PasswordInput from "../UIS/PasswordInput";
 import { useAuth } from "../../AuthContext";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth } from "../../firebase/firebase";
 import ErrorCard from "../UIS/ErrorCard";
 
 function LoginPage() {
@@ -64,15 +65,17 @@ function LoginPage() {
   };
 
   const handleForgotPassword = async () => {
-    if (!email) {
-      alert("Please enter your email first.");
+    const resetEmail = prompt("Enter your email");
+
+    if (!resetEmail) {
+      alert("Please enter your email to reset your password.");
       return;
     }
 
     try {
       setLoadingReset(true);
-      await sendPasswordResetEmail(auth, email);
-      alert(`Password reset email sent to ${email}`);
+      await sendPasswordResetEmail(auth, resetEmail);
+      alert(`Password reset email sent to ${resetEmail}`);
     } catch (error) {
       alert(error.message);
     } finally {
@@ -81,7 +84,6 @@ function LoginPage() {
   };
 
   return (
-    // min-h-screen
     <div className=" flex flex-col">
       <main className="flex-grow bg-[#F3F4F6] py-12 px-4 sm:px-6 lg:px-12 ">
         <div className="max-w-lg md:max-w-xl lg:max-w-2xl mx-auto ">

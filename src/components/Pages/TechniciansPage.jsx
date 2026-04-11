@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getTechnicians } from "../../technicianService";
+import { getTechnicians } from "../../firebase/services/technicianService";
 import { FiSearch } from "react-icons/fi";
 import TechnicianCard from "../UIS/TechnicianCard";
 import Spinner from "../UIS/Spinner";
@@ -8,7 +8,6 @@ const TechniciansPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [technicians, setTechnicians] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   // Get Technicians
   useEffect(() => {
@@ -19,7 +18,6 @@ const TechniciansPage = () => {
         setTechnicians(data);
       } catch (error) {
         console.error(error);
-        setError("Failed to load technicians");
       } finally {
         setLoading(false);
       }

@@ -1,5 +1,4 @@
-// services/userService.js
-import { db } from "./firebase";
+import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
 
 export const getUsers = async () => {

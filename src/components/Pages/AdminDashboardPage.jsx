@@ -26,13 +26,14 @@ import {
   deleteTechnician,
   getTechnicians,
   updateTechnician,
-} from "../../technicianService";
-import { getUsers } from "../../userService";
+} from "../../firebase/services/technicianService";
+import { getUsers } from "../../firebase/services/userService";
 import Spinner from "../UIS/Spinner";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../auth";
+// import { logout } from "../../auth";
+import { logout } from "../../firebase/auth/auth";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { auth, db } from "../../firebase";
+import { auth, db } from "../../firebase/firebase";
 import { useAuth } from "../../AuthContext";
 import {
   reload,
@@ -1487,12 +1488,16 @@ function SettingsSection() {
 
     try {
       await verifyBeforeUpdateEmail(auth.currentUser, newEmail);
-      alert("Verification email sent. please verify before change");
+      alert(
+        `We’ve sent a verification email to ${newEmail}. Please verify it before your email can be updated.`,
+      );
 
       await reload(auth.currentUser);
     } catch (error) {
       if (error.code === "auth/requires-recent-login") {
-        alert("Please log out and log in again before changing email.");
+        alert(
+          "For security reasons, please log out and log in again before changing your email.",
+        );
       } else {
         alert(error.message);
       }

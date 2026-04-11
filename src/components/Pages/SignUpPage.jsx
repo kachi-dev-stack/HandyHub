@@ -1,6 +1,6 @@
 import { FiUser, FiMail, FiLock, FiCheckCircle } from "react-icons/fi";
 import { useState, useEffect } from "react";
-import { signup } from "../../auth";
+import { signup } from "../../firebase/auth/auth";
 import { Link, useNavigate } from "react-router-dom";
 import PasswordInput from "../UIS/PasswordInput";
 import { useAuth } from "../../AuthContext";
@@ -41,7 +41,7 @@ function SignUpPage() {
       const user = await signup(email, password);
 
       alert(
-        `Verification email sent to ${user.email}. Please check your inbox and verify before logging`,
+        `We’ve sent a verification email to ${user.email}. Please check your inbox or spam folder and click the link to verify your account before logging in.`,
       );
 
       navigate("/login");
@@ -53,7 +53,6 @@ function SignUpPage() {
   };
 
   return (
-    // min-h-screen
     <div className=" flex flex-col">
       <main className="flex-grow bg-[#F3F4F6] py-12 px-4 sm:px-6 lg:px-12 ">
         <div className="max-w-lg md:max-w-xl lg:max-w-2xl mx-auto">

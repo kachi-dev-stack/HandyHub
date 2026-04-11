@@ -8,7 +8,7 @@ import {
 } from "react-icons/fi";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getTechnicianById } from "../../technicianService";
+import { getTechnicianById } from "../../firebase/services/technicianService";
 import Spinner from "../UIS/Spinner";
 
 function TechnicianProfilePage() {

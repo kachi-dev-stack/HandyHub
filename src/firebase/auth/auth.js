@@ -1,4 +1,4 @@
-import { auth } from "./firebase";
+import { auth } from "../firebase";
 import {
   createUserWithEmailAndPassword,
   reload,
@@ -6,9 +6,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { db } from "./firebase";
+import { db } from "../firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
-import { Await } from "react-router-dom";
 
 // Sign Up
 export const signup = async (email, password) => {

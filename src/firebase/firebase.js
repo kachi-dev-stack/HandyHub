@@ -1,9 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-// import { getStorage } from "firebase/storage";
 
-// Your web app's Firebase configuration
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBrv5rsBPoMbkJhK4fX7Z3o1QWRoSUtAtY",
   authDomain: "handyhub-16f7e.firebaseapp.com",
@@ -15,7 +14,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// ✅ Export services
+// Export services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-// export const storage = getStorage(app);

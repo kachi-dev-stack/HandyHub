@@ -10,15 +10,6 @@ function ErrorCard({ message, onClose }) {
 
         <p className="text-sm text-red-600 font-medium">{message}</p>
       </div>
-
-      {/* Close button */}
-      {/* <button
-          type="button"
-          onClick={onClose}
-          className="text-red-500 hover:text-red-700 text-xl font-bold leading-none"
-        >
-          ×
-        </button> */}
     </div>
   );
 }

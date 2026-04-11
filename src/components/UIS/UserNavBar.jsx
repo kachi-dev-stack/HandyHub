@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { FiLogOut } from "react-icons/fi";
-import { logout } from "../../auth";
+import { logout } from "../../firebase/auth/auth";
 import { useAuth } from "../../AuthContext";
 const UserNavBar = () => {
   const { user } = useAuth();
@@ -93,7 +93,7 @@ const UserNavBar = () => {
           </div>
         </div>
 
-        {/* Optional: fade-in animation */}
+        {/* fade-in animation */}
         <style jsx>{`
           .animate-fadeIn {
             animation: fadeIn 0.2s ease-out forwards;

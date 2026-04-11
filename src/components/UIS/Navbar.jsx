@@ -1,19 +1,33 @@
 import { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { NavLink, Link, useLocation } from "react-router-dom";
-import { seedUsers } from "../../seed/seedUsers";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const isHome = location.pathname === "/";
 
-  const handleClick = () => {
-    if (location.pathname == "/") {
-      const section = document.getElementById("home");
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
-      }
-    }
+  const navClass = (extraClass = "") => {
+    return ({ isActive }) =>
+      isActive
+        ? `text-orange-500 font-semibold relative cursor-pointer ${extraClass}`
+        : `hover:text-orange-500 transition-colors duration-200 font-medium cursor-pointer ${extraClass}`;
+  };
+  const getStartedClass = ({ isActive }) =>
+    isActive
+      ? "bg-[#EA580C] text-white px-6 py-2 rounded-lg font-medium shadow-lg scale-[0.98] transition-all"
+      : "bg-[#F97316] hover:bg-[#EA580C] text-white px-6 py-2 rounded-lg font-medium transition-all shadow-md hover:shadow-lg";
+
+  const openMenu = () => setIsOpen(!false);
+  const closeMenu = () => setIsOpen(false);
+
+  const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+
+    closeMenu();
   };
 
   return (
@@ -29,45 +43,39 @@ function Navbar() {
             </Link>
           </div>
 
+          {/* DESKTOP */}
           <div className="hidden md:flex items-center space-x-8">
-            <NavLink
-              to="/"
-              className="hover:text-[#F97316] transition-colors"
-              onClick={handleClick}
-            >
+            <NavLink to="/" className={navClass()}>
               Home
             </NavLink>
-            {location.pathname === "/" && (
-              <a href="#features" className="text-white hover:text-orange-400">
-                Features
-              </a>
-            )}
-            {location.pathname === "/" && (
-              <a
-                href="#howitworks"
-                className="text-white hover:text-orange-400"
-              >
-                How It Works
-              </a>
-            )}
 
-            <NavLink
-              to="/login"
-              className="hover:text-[#F97316] transition-colors"
-            >
+            {isHome && (
+              <button
+                className="block py-2 hover:text-[#F97316] transition-colors "
+                onClick={() => scrollToSection("features")}
+              >
+                Features
+              </button>
+            )}
+            {isHome && (
+              <button
+                className="block py-2 hover:text-[#F97316] transition-colors"
+                onClick={() => scrollToSection("howitworks")}
+              >
+                How it Works
+              </button>
+            )}
+            <NavLink to="/login" className={navClass()}>
               Login
             </NavLink>
-            <NavLink
-              to="/signup"
-              className="bg-[#F97316] hover:bg-[#EA580C] text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg"
-            >
+            <NavLink to="/signup" className={getStartedClass}>
               Get Started
             </NavLink>
           </div>
-
+          {/* MOBILE */}
           <div className="md:hidden">
             <button
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={openMenu}
               className="text-white hover:text-[#F97316] transition-colors"
             >
               {isOpen ? <FaTimes size={28} /> : <FaBars size={28} />}
@@ -75,46 +83,47 @@ function Navbar() {
           </div>
         </div>
       </div>
-
+      {/* MOBILE MENU */}
       {isOpen && (
         <div className="md:hidden bg-[#1E3A8A] border-t border-blue-700">
           <div className="px-4 pt-2 pb-4 space-y-3">
             <NavLink
               to="/"
-              className="block py-2 hover:text-[#F97316] transition-colors"
-              onClick={() => setIsOpen(false)}
+              className={navClass("block py-2")}
+              onClick={closeMenu}
             >
               Home
             </NavLink>
-            {location.pathname === "/" && (
-              <a
-                href="#features"
-                className="block text-white hover:text-orange-400"
-                onClick={() => setIsOpen(false)}
+            {isHome && (
+              <button
+                className="block py-2 hover:text-[#F97316] transition-colors"
+                onClick={() => scrollToSection("features")}
               >
                 Features
-              </a>
+              </button>
             )}
-            {location.pathname === "/" && (
-              <a
-                href="#howitworks"
-                className="block text-white hover:text-orange-400"
-                onClick={() => setIsOpen(false)}
+            {isHome && (
+              <button
+                className="block py-2 hover:text-[#F97316] transition-colors"
+                onClick={() => scrollToSection("howitworks")}
               >
-                How It Works
-              </a>
+                How it Works
+              </button>
             )}
             <NavLink
               to="/login"
-              className="block py-2 hover:text-[#F97316] transition-colors"
-              onClick={() => setIsOpen(false)}
+              className={navClass("block py-2")}
+              onClick={closeMenu}
             >
               Login
             </NavLink>
+
             <NavLink
               to="/signup"
-              className="block bg-[#F97316] hover:bg-[#EA580C] text-white px-6 py-2 rounded-lg font-medium text-center transition-colors"
-              onClick={() => setIsOpen(false)}
+              className={({ isActive }) =>
+                `${getStartedClass({ isActive })} block text-center`
+              }
+              onClick={closeMenu}
             >
               Get Started
             </NavLink>

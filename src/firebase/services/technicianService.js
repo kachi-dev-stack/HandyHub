@@ -1,5 +1,13 @@
-import { db } from "./firebase";
-import { collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { db } from "../firebase";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  getDoc,
+  doc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
 
 // Add Technician
 export const addTechnician = async (data) => {
@@ -42,23 +50,23 @@ export const getTechnicianById = async (id) => {
 };
 
 // Update Technician
-export const updateTechnician = async (id, data) =>{
+export const updateTechnician = async (id, data) => {
   try {
     const ref = doc(db, "technicians", id);
     await updateDoc(ref, data);
   } catch (error) {
-    console.error("Error updating technician: ", error)
-    throw error
+    console.error("Error updating technician: ", error);
+    throw error;
   }
-}
+};
 
 // Delete Technician
-export const deleteTechnician = async (id)=>{
+export const deleteTechnician = async (id) => {
   try {
-    const ref =  doc (db, "technicians", id);
-    await deleteDoc(ref)
+    const ref = doc(db, "technicians", id);
+    await deleteDoc(ref);
   } catch (error) {
-    console.error("Error deleting technician: ", error)
-    throw error
+    console.error("Error deleting technician: ", error);
+    throw error;
   }
-}
+};

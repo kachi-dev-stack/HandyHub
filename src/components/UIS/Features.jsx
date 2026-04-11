@@ -1,4 +1,3 @@
-// import { FaSearch, FaShieldAlt, FaImage, FaStar } from "react-icons/fa";
 import { FiSearch, FiShield, FiImage, FiStar } from "react-icons/fi";
 import FeatureCard from "./FeatureCard";
 
